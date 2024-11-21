@@ -44,9 +44,7 @@ const CreateUser = async (req: Request, res: Response): Promise<Response> => {
 				req.body.password,
 				secretKey
 			).toString(),
-			firstName: req.body.firstName,
-			middleName: req.body.middleName,
-			lastName: req.body.lastName,
+			name: req.body.name,
 			updatedBy: '1',
 			createdBy: '1'
 		});

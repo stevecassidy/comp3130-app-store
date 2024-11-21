@@ -8,9 +8,7 @@ interface IUser extends IBase {
 	_id: mongoose.Types.ObjectId;
 	email: string;
 	password: string;
-	firstName: string;
-	middleName: string;
-	lastName: string;
+	name: string;
 }
 
 export type { IUser };
