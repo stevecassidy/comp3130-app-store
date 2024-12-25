@@ -9,6 +9,7 @@ import helmet from "helmet";
 import { AuthenticationRouter } from "../routes/auth/auth.routes";
 import { UserRouter } from "../routes/user/user.routes";
 import { StudentRouter } from '../routes/student/student.routes';
+import { AndroidAppRouter } from "../routes/androidApp/androidApp.routes";
 
 import CronConfig from "./cron.config";
 
@@ -16,6 +17,8 @@ const { cronStart } = CronConfig();
 //#endregion
 
 //#region Configuration
+
+export const APK_DIR = './apk-storage';
 
 // Const variable
 const App: Express = express();
@@ -37,6 +40,9 @@ App.use(express.json());
 App.use(bodyParser.urlencoded({ extended: true }));
 App.use(bodyParser.json());
 
+// serve the APK files
+App.use('/apk', express.static(APK_DIR));
+
 // Run Cron
 // cronStart();
 
@@ -57,6 +63,10 @@ App.use("/api/user", UserRouter);
 
 // Student
 App.use('/api/student', StudentRouter);
+
+// AndroidApp
+App.use('/api/app', AndroidAppRouter);
+
 //#endregion
 
 export default App;

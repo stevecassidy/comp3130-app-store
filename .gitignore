@@ -1,1 +1,4 @@
 node_modules
+apps/api/uploads
+apps/api/apk-storage
+.turbo

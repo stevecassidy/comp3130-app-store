@@ -4,11 +4,14 @@ import { IBase } from "../base.interface";
 //#endregion
 
 // Model
-interface IUser extends IBase {
-	_id: mongoose.Types.ObjectId;
+interface IUserBase extends IBase {
 	email: string;
 	password: string;
 	name: string;
 }
 
-export type { IUser };
+interface IUser extends IUserBase {
+	_id: mongoose.Types.ObjectId;
+}
+
+export type { IUser, IUserBase };

@@ -1,7 +1,7 @@
 //#region Import
 import { Router } from "express";
 import { Login } from "../../controller/authentication/login.controller";
-import { ForgotPassword } from "../../controller/authentication/forgotPassword.controller";
+//import { ForgotPassword } from "../../controller/authentication/forgotPassword.controller";
 import { AccessToken } from "../../controller/authentication/accessToken.controller";
 //#endregion
 
@@ -9,7 +9,7 @@ import { AccessToken } from "../../controller/authentication/accessToken.control
 const AuthenticationRouter = Router();
 AuthenticationRouter.get("/accessToken", AccessToken)
 AuthenticationRouter.post("/login", Login);
-AuthenticationRouter.post("/forgotPassword", ForgotPassword);
+//AuthenticationRouter.post("/forgotPassword", ForgotPassword);
 //#endregion
 
 export { AuthenticationRouter };
