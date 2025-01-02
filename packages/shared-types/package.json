@@ -1,0 +1,12 @@
+{
+  "name": "@app-store/shared-types",
+  "version": "1.0.0",
+  "description": "Shared types for the project",
+  "main": "src/index.js",
+  "devDependencies": {},
+  "scripts": {
+    "build": "rm -rf dist && tsc --declaration --outDir dist" 
+   },
+  "author": "",
+  "license": "MIT"
+}

@@ -3,11 +3,12 @@ import { Request, Response } from "express";
 import { ApiResponse, SingleApiResponse } from "../../helpers/response.helper";
 import { CustomRequest } from '../../interface/custom_request.interface'
 import {AndroidAppModel} from "../../models/androidApp/androidApp.model";
-import { IAndroidApp, ICreateAndroidAppRequest, IUpdateAndroidAppRequest } from "../../interface/androidApp/androidApp.interface";
+import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync} from "fs";
 import {join} from "path";
 import {APK_DIR} from "../../config/express.config";
 import {AndroidAppApkModel} from "../../models/androidApp/apkFile.model";
+import {CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 
 //#endregion
 
@@ -144,7 +145,7 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
 
     // Extracting request
     const { id: currentUserId } = req as CustomRequest
-    const body = req.body as ICreateAndroidAppRequest
+    const body = req.body as CreateAndroidAppRequest
 
     try {
 
@@ -204,7 +205,7 @@ export const UpdateAndroidApp = async (req: Request, res: Response): Promise<Res
     // Extracting request
     const { id: currentUserId } = req as CustomRequest
     const appId = req.params.id as string;
-    const body = req.body as IUpdateAndroidAppRequest
+    const body = req.body as UpdateAndroidAppRequest
 
     try {
         // Trigger find then update

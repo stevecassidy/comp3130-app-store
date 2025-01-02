@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import * as React from 'react';
 import {API_BASE_URL} from '../config';
-import {Navigate, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

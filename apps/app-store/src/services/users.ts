@@ -18,7 +18,8 @@ const USER_KEY = 'usertoken';
  * 
  * @param userToken - user token as returned by the API on login
  */
-export const storeUser = (userToken: UserToken) => {
+export const storeUser = (userToken: UserToken | null) => {
+  console.log('Storing user token', userToken);
   localStorage.setItem(USER_KEY, JSON.stringify(userToken));
 };
 
@@ -30,8 +31,9 @@ export const storeUser = (userToken: UserToken) => {
  */
 export const getCurrentUser = () => {
   const userToken = localStorage.getItem(USER_KEY);
+  console.log('Getting current user', userToken);
   if (userToken) {
-    return JSON.parse(userToken.user);
+    return JSON.parse(userToken);
   }
   return null;
 };

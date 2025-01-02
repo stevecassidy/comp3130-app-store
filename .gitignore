@@ -1,4 +1,7 @@
 node_modules
 apps/api/uploads
 apps/api/apk-storage
+apps/*/build
 .turbo
+packages/shared-types/dist
+apps/api/.env

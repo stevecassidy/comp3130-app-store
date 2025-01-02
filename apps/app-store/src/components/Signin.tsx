@@ -14,7 +14,6 @@ import ForgotPassword from './ForgotPassword.tsx';
 import {API_BASE_URL} from '../config.tsx';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
-import {storeUser} from '../services/users.ts';
 import {useContext} from 'react';
 import {UserDispatchContext} from '../contexts/userContext.tsx';
 

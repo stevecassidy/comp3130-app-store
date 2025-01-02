@@ -19,11 +19,6 @@ interface IAndroidAppApk extends IBase {
 }
 
 // Request
-interface ICreateAndroidAppRequest {
-    name: string;
-    description: string;
-    owner: string;
-}
 
 interface IUpdateAndroidAppRequest {
     _id: string;
@@ -32,4 +27,4 @@ interface IUpdateAndroidAppRequest {
     owner: string;
 }
 
-export type { IAndroidApp, IAndroidAppApk, ICreateAndroidAppRequest, IUpdateAndroidAppRequest };
+export type { IAndroidApp, IAndroidAppApk };
