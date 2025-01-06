@@ -17,7 +17,16 @@ export const userTokenReducer = (state: UserToken | null, action: UserAction) =>
   }
 };
 
-export const UserTokenContext = createContext<UserToken | null>(null);
-export const UserDispatchContext = createContext<React.Dispatch<UserAction> | null>(null);
+export type UserTokenContextFns = {
+  login: (token: UserToken) => void;
+  logout: () => void;
+  currentUser: () => UserToken | null;
+};
+
+export const UserTokenContext = createContext<UserTokenContextFns>({
+  login: () => {},
+  logout: () => {},
+  currentUser: () => null,
+});
 
 

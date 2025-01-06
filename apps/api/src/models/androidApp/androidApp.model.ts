@@ -26,6 +26,7 @@ const androidAppSchema = new Schema<IAndroidApp>({
   }, {
     timestamps: true,
     toJSON: {
+        virtuals: true,
         transform: function(doc, ret) {
           ret.id = ret._id;
           delete ret._id;
@@ -33,9 +34,17 @@ const androidAppSchema = new Schema<IAndroidApp>({
         },
         versionKey: false // This removes __v
       }
-})
+    })
+
+androidAppSchema.virtual('apkFiles', {
+    ref: 'AndroidAppApk',
+    localField: '_id',
+    foreignField: 'appId',
+});
 
 const AndroidAppModel = model<IAndroidApp>("AndroidApp", androidAppSchema)
+
+
 //#endregion
 
 export { AndroidAppModel }

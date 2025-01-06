@@ -9,6 +9,7 @@ interface IAndroidApp extends IBase {
     name: string;
     description: string;
     owner: string; // email address of User
+    apkFiles?: mongoose.Types.ObjectId[];
 }
 
 // An APK file associated with the app, there may be more than one version
@@ -27,4 +28,4 @@ interface IUpdateAndroidAppRequest {
     owner: string;
 }
 
-export type { IAndroidApp, IAndroidAppApk };
+export type { IAndroidApp, IAndroidAppApk, IUpdateAndroidAppRequest};

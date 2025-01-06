@@ -6,9 +6,9 @@ import { CustomRequest } from "../interface/custom_request.interface";
 //#endregion
 
 /**
- * @name SearchStudents 
+ * @name AuthMiddleware 
  * @memberof Middeware
- * @description function for validating user token
+ * @description validate the user token, populate the request with the user id, return 401 if not valid
  * @param req - Object passed by client
  * @param res - Object to be passed by server
  * @param next - next function that will run if token is valid
@@ -30,7 +30,7 @@ export const AuthMiddleware = async (
 		const decoded = jwt.verify(token, secretKey) as any;
 
 		// Make request as CustomRequest
-		// Add decoded token to string propery in CustomRequest
+		// Add decoded token to string property in CustomRequest
 		(req as CustomRequest).id = decoded.id;
 
 		// Run next function

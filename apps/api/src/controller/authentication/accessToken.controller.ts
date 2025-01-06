@@ -47,7 +47,11 @@ const AccessToken = async (req: Request, res: Response): Promise<Response> => {
                 )
 
             // Token Generation
-            const token = jwt.sign({ id: userAccessToken.userId.toString() }, `${secretKey}`, {
+            const user = { 
+                id: userAccessToken.userId.toString() 
+                
+            }
+            const token = jwt.sign(user, `${secretKey}`, {
                 expiresIn: "2h"
             });
 

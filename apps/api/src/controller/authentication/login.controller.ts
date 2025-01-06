@@ -13,7 +13,17 @@ dotenv.config();
 //#endregion
 
 const secretKey = process.env.TOKEN_KEY as string;
-const accessSecretKey = process.env.ACCESS_TOKEN_KEY as string;
+
+const generateToken = (user: IUser) => {
+
+		// Token Generation
+		const token = jwt.sign({ id: user._id.toString() }, `${secretKey}`, {
+			expiresIn: "2h"
+		});
+
+		return token;
+	}
+
 
 /**
  * @name Login 
@@ -59,36 +69,35 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 				})
 			);
 
-		// Token Generation
-		const token = jwt.sign({ id: user._id.toString() }, `${secretKey}`, {
-			expiresIn: "2h"
-		});
-		const accessToken = jwt.sign(
-			{ id: user._id.toString() },
-			`${accessSecretKey}`,
-			{ expiresIn: "7d" }
-		);
 
 		// Check if user access token is already existing
-		const userAccessToken = await AccessTokenModel.findOne<IAccessToken>({
+		let userAccessToken = await AccessTokenModel.findOne({
 			userId: user._id
 		});
 
 		if (userAccessToken === null) {
+
+			// Token Generation
+			const token = jwt.sign(
+				{ id: user._id.toString() }, 
+				secretKey, 
+				{ expiresIn: "7d" }
+			);
+
 			// Save Access Token
-			const newUserAccessToken = new AccessTokenModel({
+			userAccessToken = new AccessTokenModel({
 				userId: user._id.toString(),
-				accessToken: accessToken
+				accessToken: token
 			});
 
-			await newUserAccessToken.save();
+			await userAccessToken.save();
 		}
 
 		// Return
 		return res.status(200).json(
 			SingleApiResponse({
 				success: true,
-				data: { user, token: token, accessToken: userAccessToken ? userAccessToken.accessToken : accessToken },
+				data: { user, token: userAccessToken.accessToken },
 				statusCode: 200
 			})
 		);

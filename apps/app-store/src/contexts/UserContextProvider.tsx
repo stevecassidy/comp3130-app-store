@@ -1,6 +1,6 @@
 import {useEffect, useReducer} from "react";
-import {getCurrentUser, storeUser} from "../services/users";
-import {userTokenReducer, UserTokenContext, UserDispatchContext} from "./userContext";
+import {getCurrentUser, storeUser, UserToken} from "../services/users";
+import {userTokenReducer, UserTokenContext} from "./userContext";
 
 
 export const UserContextProvider = (props: {children: React.ReactNode;}) => {
@@ -14,11 +14,24 @@ export const UserContextProvider = (props: {children: React.ReactNode;}) => {
     }
   }, [user]);
 
+
+  const login = (token: UserToken) => {
+    storeUser(token);
+    dispatch({type: 'LOGIN', payload: token});
+  };
+
+  const logout = () => {
+    storeUser(null);
+    dispatch({type: 'LOGOUT', payload: null});
+  };
+
+  const currentUser = () => {
+    return getCurrentUser();
+  };
+
   return (
-    <UserTokenContext.Provider value={user}>
-      <UserDispatchContext.Provider value={dispatch}>
+    <UserTokenContext.Provider value={{login, logout, currentUser}}>
         {props.children}
-      </UserDispatchContext.Provider>
     </UserTokenContext.Provider>
   );
 };

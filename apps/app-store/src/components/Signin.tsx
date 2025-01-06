@@ -15,7 +15,7 @@ import {API_BASE_URL} from '../config.tsx';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {useContext} from 'react';
-import {UserDispatchContext} from '../contexts/userContext.tsx';
+import {UserTokenContext} from '../contexts/userContext.tsx';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -66,7 +66,7 @@ export default function SignIn() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
-  const userDispatch = useContext(UserDispatchContext);
+  const {login} = useContext(UserTokenContext);
   
   const handleClickOpen = () => {
     setOpen(true);
@@ -91,7 +91,7 @@ export default function SignIn() {
     ).then(response => {
       console.log(response.data);
       if (response.data.statusCode === 200) {
-        if (userDispatch) userDispatch({type: 'LOGIN', payload: response.data.data});
+        login(response.data.data);
         navigate('/');
       } else {
         console.log('login error');

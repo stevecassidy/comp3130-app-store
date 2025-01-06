@@ -110,8 +110,11 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
     
     try {
 
-        const app = await AndroidAppModel.findById<IAndroidApp>(id);
- 
+        const app = await AndroidAppModel
+            .findById<IAndroidApp>(id)
+            .populate('apkFiles');
+        console.log(app);
+
         return res.status(200).json(
             SingleApiResponse({
                 success: true,
@@ -311,7 +314,6 @@ export const AddAPKForAndroidApp = async (req: Request, res: Response): Promise<
         const newApk = new AndroidAppApkModel({
             filename: apk.filename,
             appId,
-            dateCreated: new Date(),
             createdBy: currentUserId,
         });
 

@@ -23,9 +23,12 @@ const androidAppApkSchema = new Schema<IAndroidAppApk>({
     timestamps: true,
     toJSON: {
         transform: function(doc, ret) {
-          ret.id = ret._id;
+          ret.url = `/apk/${ret.filename}`;
+          delete ret.appId;
           delete ret._id;
           delete ret.__v;
+          delete ret.filename;
+          delete ret.id;
         },
         versionKey: false // This removes __v
       }

@@ -7,12 +7,11 @@ export interface AndroidApp extends APIBase {
   name: string;
   description: string;
   owner: string;
+  apkFiles?: AndroidAppApk[];
 }
 
 export interface AndroidAppApk extends APIBase {
-  id: string;
-  appId: string;
-  filename: string;
+  url: string;
 }
 
 export interface CreateAndroidAppRequest extends APIBase {
@@ -28,3 +27,20 @@ export interface UpdateAndroidAppRequest extends APIBase {
   owner: string;
 }
 
+export interface UploadAPKResponse {
+  appID: string;
+  url: string;
+}
+
+/**
+ * Parse date strings in an API response into Date objects
+ * @param data an object from the API but with string dates
+ * @returns 
+ */
+export const objectToAndroidApp = (data: {dateUpdated: string, dateCreated: string}): AndroidApp => {
+  return {
+    ...data,
+    dateUpdated: new Date(data.dateUpdated),
+    dateCreated: new Date(data.dateCreated),
+  } as AndroidApp;
+};

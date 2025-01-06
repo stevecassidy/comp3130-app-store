@@ -1,21 +1,24 @@
 
-import {AndroidApp, CreateAndroidAppRequest, UpdateAndroidAppRequest} from '@app-store/shared-types';
+import {AndroidApp, CreateAndroidAppRequest, objectToAndroidApp, UpdateAndroidAppRequest, UploadAPKResponse} from '@app-store/shared-types';
 import {API_BASE_URL} from '../config';
 import {getCurrentUser} from './users';
 
-
 export const getAndroidApps = async (): Promise<AndroidApp[]> => {
   const url = `${API_BASE_URL}/api/app/_/1`;
-  const token = getCurrentUser()?.token;
-  console.log('token', token);
-  if (token) {
+  const user = getCurrentUser();
+  console.log(user);
+  if (user) {
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${user.token}`,
       },
     });
     const data = await response.json();
-    return data.data;
+    if (data.count > 0) {
+      return data.data.map(objectToAndroidApp);
+    } else {
+      return [];
+    }
   } else {
     throw new Error('User not logged in');
   }
@@ -32,7 +35,7 @@ export const getAndroidApp = async (id: string): Promise<AndroidApp> => {
       },
     });
     const data = await response.json();
-    return data.data;
+    return objectToAndroidApp(data.data);
   } else {
     throw new Error('User not logged in');
   }
@@ -53,7 +56,7 @@ export const createAndroidApp = async (
       body: JSON.stringify(androidApp),
     });
     const data = await response.json();
-    return data.data;
+    return objectToAndroidApp(data.data);
   } else {
     throw new Error('User not logged in');
   }
@@ -75,7 +78,7 @@ export const updateAndroidApp = async (
       body: JSON.stringify(androidApp),
     });
     const data = await response.json();
-    return data.data;
+    return objectToAndroidApp(data.data);
   } else {
     throw new Error('User not logged in');
   }
@@ -94,19 +97,21 @@ export const deleteAndroidApp = async (id: string): Promise<void> => {
 };
 
 
-export const uploadAPK = async (id: string, apkFile: File): Promise<void> => {
+export const uploadAPK = async (id: string, apkFile: File): Promise<UploadAPKResponse> => {
   const url = `${API_BASE_URL}/api/app/${id}/apk`;
   const token = getCurrentUser()?.token;
   if (token) {
     const formData = new FormData();
     formData.append('apk', apkFile);
-    await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
+    const data = await response.json();
+    return data.data;
   } else {
     throw new Error('User not logged in');
   }
