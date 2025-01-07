@@ -4,16 +4,17 @@ import { IBase } from "../base.interface";
 //#endregion
 
 // Model
-interface IAndroidApp extends IBase {
+export interface IAndroidApp extends IBase {
     _id: mongoose.Types.ObjectId;
     name: string;
+    slug: string;
     description: string;
     owner: string; // email address of User
     apkFiles?: mongoose.Types.ObjectId[];
 }
 
 // An APK file associated with the app, there may be more than one version
-interface IAndroidAppApk extends IBase {
+export interface IAndroidAppApk extends IBase {
     _id: mongoose.Types.ObjectId;
     appId: mongoose.Types.ObjectId;
     filename: string;
@@ -21,11 +22,20 @@ interface IAndroidAppApk extends IBase {
 
 // Request
 
-interface IUpdateAndroidAppRequest {
+export interface IUpdateAndroidAppRequest {
     _id: string;
     name: string;
     description: string;
     owner: string;
 }
 
-export type { IAndroidApp, IAndroidAppApk, IUpdateAndroidAppRequest};
+// images associated with the app, screenshots, app icon
+
+export interface IAndroidAppImage extends IBase {
+    _id: mongoose.Types.ObjectId;
+    appId: mongoose.Types.ObjectId;
+    role: string;
+    filename: string;
+}
+
+

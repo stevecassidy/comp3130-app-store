@@ -6,9 +6,11 @@ import {AndroidAppModel} from "../../models/androidApp/androidApp.model";
 import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync} from "fs";
 import {join} from "path";
-import {APK_DIR} from "../../config/express.config";
+import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
 import {AndroidAppApkModel} from "../../models/androidApp/apkFile.model";
 import {CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
+import {generateAppSlug} from "../../helpers/appslug.helper";
 
 //#endregion
 
@@ -34,6 +36,11 @@ const ValidateAndroidAppName = async (value: string, id?: string): Promise<boole
     return true
 }
 
+
+const validateID = async (slug: string): Promise<boolean> => {
+    const found = await AndroidAppModel.findOne({slug: slug});
+    return found === null;
+}
 
 /**
  * @name GetAndroidApps 
@@ -109,11 +116,10 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
     const id = req.params.id as string;
     
     try {
-
         const app = await AndroidAppModel
             .findById<IAndroidApp>(id)
-            .populate('apkFiles');
-        console.log(app);
+            .populate('apkFiles')
+            .populate('images');
 
         return res.status(200).json(
             SingleApiResponse({
@@ -151,7 +157,6 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
     const body = req.body as CreateAndroidAppRequest
 
     try {
-
         // Validation
         const validName = await ValidateAndroidAppName(body.name)
 
@@ -165,9 +170,12 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
                 })
             );
 
+        const appSlug = await generateAppSlug(validateID);
+    
         // AndroidApp Object
         const newAndroidApp = new AndroidAppModel({
             name: body.name,
+            slug: appSlug,
             description: body.description,
             owner: body.owner,
             createdBy: currentUserId,
@@ -185,6 +193,7 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
         );
 
     } catch (error: unknown) {
+        console.error(error);
         return res.status(500).json(
             SingleApiResponse({
                 success: false,
@@ -326,13 +335,76 @@ export const AddAPKForAndroidApp = async (req: Request, res: Response): Promise<
                 success: true,
                 data: {
                     appId,
-                    url: `/apk/${apk.filename}`,
+                    url: `/assets/apk/${apk.filename}`,
                 },
                 statusCode: 201
             })
         );
 
     } catch (error: unknown) {
+        return res.status(500).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 500
+            })
+        );
+    }
+}
+
+
+// Image Routes
+
+
+/**
+ * @name AddImageForAndroidApp
+ * @memberof Actions
+ * @description Add an image to an androidApp
+ * @param req - Object passed by client
+ * @param res - Object to be passed by server
+ * @returns Res
+ */
+export const AddImageForAndroidApp = async (req: Request, res: Response): Promise<Response> => {
+
+    // Extracting request
+    const { id: currentUserId } = req as CustomRequest
+    const appId = req.params.id as string;
+    const imageFile = req.file as Express.Multer.File;
+    const role = req.body.role as string;
+
+    try {
+        // move to the final location
+        mkdirSync(IMAGE_DIR, { recursive: true });
+        const extension = imageFile.originalname.split('.').pop();
+        const imageFileName = `${imageFile.filename}.${extension}`;
+        renameSync(imageFile.path, join(IMAGE_DIR, imageFileName));
+
+        // create db record for apk
+        const newImage = new AndroidAppImageModel({
+            filename: imageFileName,
+            appId,
+            role,
+            createdBy: currentUserId,
+        });
+
+        newImage.save();
+
+        // generate response
+
+        return res.status(201).json(
+            SingleApiResponse({
+                success: true,
+                data: {
+                    appId,
+                    role,
+                    url: `/assets/images/${imageFileName}`,
+                },
+                statusCode: 201
+            })
+        );
+
+    } catch (error: unknown) {
+        console.error(error);
         return res.status(500).json(
             SingleApiResponse({
                 success: false,

@@ -18,7 +18,10 @@ const { cronStart } = CronConfig();
 
 //#region Configuration
 
-export const APK_DIR = './apk-storage';
+// different asset dir for testing so we can clean it up
+export const ASSET_DIR = process.env.NODE_ENV === 'test' ? './tests/assets' : './assets';
+export const APK_DIR = `${ASSET_DIR}/apk`;
+export const IMAGE_DIR = `${ASSET_DIR}/images`;
 
 // Const variable
 const App: Express = express();
@@ -40,8 +43,8 @@ App.use(express.json());
 App.use(bodyParser.urlencoded({ extended: true }));
 App.use(bodyParser.json());
 
-// serve the APK files
-App.use('/apk', express.static(APK_DIR));
+// serve static assets
+App.use('/assets', express.static(ASSET_DIR));
 
 // Run Cron
 // cronStart();

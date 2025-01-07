@@ -1,7 +1,9 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach, afterAll } from '@jest/globals';
 import request from 'supertest';
 import App from "../src/config/express.config";
 import { createUserRecord } from '../src/controller/user/user.controller';
+import { ASSET_DIR } from '../src/config/express.config';
+import { rmSync } from 'fs';
 
 describe('AndroidApp Endpoints', () => {
   let authToken: string;
@@ -34,6 +36,11 @@ describe('AndroidApp Endpoints', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send(testApp);
     createdAppId = createResponse.body.data.id;
+  });
+
+  afterAll(async () => {
+    // delete any created assets in ASSET_DIR
+    rmSync(ASSET_DIR, { recursive: true });
   });
 
   test('GET /api/app/:id - get app by id', async () => {
@@ -147,6 +154,17 @@ describe('AndroidApp Endpoints', () => {
       expect(response.status).toBe(201);
       expect(response.body.data.url).toBeDefined();
       
+      // get the app and check that the image is listed
+      const appResponse = await request(App)
+      .get(`/api/app/${createdAppId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
+
+      expect(appResponse.body.data.apkFiles.length).toBe(1);
+      expect(appResponse.body.data.apkFiles[0].url).toBe(response.body.data.url);
+
+
+
       // now get the APK file back
       const apkResponse = await request(App)
         .get(response.body.data.url)
@@ -155,6 +173,38 @@ describe('AndroidApp Endpoints', () => {
 
       expect(apkResponse.body).toBeDefined();
     });
+
+
+    test('POST /api/app/:id/image - upload image with auth', async () => {
+      const imageFilePath = 'tests/fixtures/screenshot.png';
+      const response = await request(App)
+        .post(`/api/app/${createdAppId}/image`)
+        .field('role', 'icon')
+        .set('Authorization', `Bearer ${authToken}`)
+        .attach('image', imageFilePath);
+
+      expect(response.status).toBe(201);
+      expect(response.body.data.url).toBeDefined();
+      
+
+      // get the app and check that the image is listed
+      const appResponse = await request(App)
+      .get(`/api/app/${createdAppId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(200);
+
+      expect(appResponse.body.data.images.length).toBe(1);
+      expect(appResponse.body.data.images[0].url).toBe(response.body.data.url);
+
+      // now get the image file back
+      const apkResponse = await request(App)
+        .get(response.body.data.url)
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200);
+
+      expect(apkResponse.body).toBeDefined();
+    });
+
 
 
 });

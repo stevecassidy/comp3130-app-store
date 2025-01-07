@@ -1,13 +1,17 @@
 import { Schema, model } from "mongoose";
-import { IAndroidAppApk } from "../../interface/androidApp/androidApp.interface";
+import { IAndroidAppImage } from "../../interface/androidApp/androidApp.interface";
 
 //#region Schema and Model
-const androidAppApkSchema = new Schema<IAndroidAppApk>({
+const androidAppImageSchema = new Schema<IAndroidAppImage>({
     appId: {
         type: Schema.Types.ObjectId,
         required: true,
     },
     filename: {
+        type: String,
+        required: true,
+    },
+    role: {
         type: String,
         required: true,
     },
@@ -23,7 +27,7 @@ const androidAppApkSchema = new Schema<IAndroidAppApk>({
     timestamps: true,
     toJSON: {
         transform: function(doc, ret) {
-          ret.url = `/assets/apk/${ret.filename}`;
+          ret.url = `/assets/images/${ret.filename}`;
           delete ret.appId;
           delete ret._id;
           delete ret.__v;
@@ -34,5 +38,5 @@ const androidAppApkSchema = new Schema<IAndroidAppApk>({
       }
 })
 
-export const AndroidAppApkModel = model<IAndroidAppApk>("AndroidAppApk", androidAppApkSchema)
+export const AndroidAppImageModel = model<IAndroidAppImage>("AndroidAppImage", androidAppImageSchema);
 //#endregion

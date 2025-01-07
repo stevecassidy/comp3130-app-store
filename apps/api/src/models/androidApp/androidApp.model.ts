@@ -7,6 +7,10 @@ const androidAppSchema = new Schema<IAndroidApp>({
         type: String,
         required: true,
     },
+    slug: {
+        type: String,
+        required: true,
+    },
     description: {
         type: String,
         required: true,
@@ -38,6 +42,12 @@ const androidAppSchema = new Schema<IAndroidApp>({
 
 androidAppSchema.virtual('apkFiles', {
     ref: 'AndroidAppApk',
+    localField: '_id',
+    foreignField: 'appId',
+});
+
+androidAppSchema.virtual('images', {
+    ref: 'AndroidAppImage',
     localField: '_id',
     foreignField: 'appId',
 });

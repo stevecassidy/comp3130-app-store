@@ -7,7 +7,8 @@ import {
   CreateAndroidApp, 
   UpdateAndroidApp, 
   DeleteAndroidApp, 
-  AddAPKForAndroidApp} from "../../controller/androidApp/androidApp.controller";
+  AddAPKForAndroidApp,
+  AddImageForAndroidApp} from "../../controller/androidApp/androidApp.controller";
 
 import multer from "multer";
 //#endregion
@@ -26,12 +27,7 @@ AndroidAppRouter.put('/:id', UpdateAndroidApp)
 AndroidAppRouter.delete('/:id', DeleteAndroidApp)
 
 AndroidAppRouter.post('/:id/apk', upload.single('apk'), AddAPKForAndroidApp)
-// AndroidAppRouter.get('/:id/apk', GetAPKListForAndroidApp)
-// AndroidAppRouter.get('/:id/apk/:apiId', GetAPKForAndroidApp)
-
-// AndroidAppRouter.post('/:id/screenshot', AddScreenshotForAndroidApp)
-// AndroidAppRouter.get('/:id/apk', GetScreenshotListForAndroidApp)
-// AndroidAppRouter.get('/:id/apk/:screenshotId', GetScreenshotForAndroidApp)
+AndroidAppRouter.post('/:id/image', upload.single('image'), AddImageForAndroidApp)
 
 
 //#endregion
