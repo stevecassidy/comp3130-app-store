@@ -8,10 +8,16 @@ export interface AndroidApp extends APIBase {
   description: string;
   owner: string;
   apkFiles?: AndroidAppApk[];
+  images?: AndroidAppImage[];
 }
 
 export interface AndroidAppApk extends APIBase {
   url: string;
+}
+
+export interface AndroidAppImage extends APIBase {
+  url: string;
+  role: string;
 }
 
 export interface CreateAndroidAppRequest extends APIBase {
@@ -31,6 +37,13 @@ export interface UploadAPKResponse {
   appID: string;
   url: string;
 }
+
+export interface UploadImageResponse {
+  appID: string;
+  url: string;
+  role: string;
+}
+
 
 /**
  * Parse date strings in an API response into Date objects

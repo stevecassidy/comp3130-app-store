@@ -20,6 +20,7 @@ const upload = multer({dest: UPLOAD_DIR});
 //#region Action
 const AndroidAppRouter = Router()
 AndroidAppRouter.use(AuthMiddleware)
+
 AndroidAppRouter.get('/:id', GetAndroidApp)
 AndroidAppRouter.get('/:searchKey/:pageNumber', GetAndroidApps)
 AndroidAppRouter.post('/', CreateAndroidApp)

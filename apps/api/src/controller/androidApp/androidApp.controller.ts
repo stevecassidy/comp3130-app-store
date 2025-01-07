@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 import { ApiResponse, SingleApiResponse } from "../../helpers/response.helper";
 import { CustomRequest } from '../../interface/custom_request.interface'
 import {AndroidAppModel} from "../../models/androidApp/androidApp.model";
-import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
+import { IAndroidApp, IAndroidAppImage } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync} from "fs";
 import {join} from "path";
-import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
+import {APK_DIR, ASSET_DIR, IMAGE_DIR} from "../../config/express.config";
 import {AndroidAppApkModel} from "../../models/androidApp/apkFile.model";
 import {CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
@@ -388,8 +388,6 @@ export const AddImageForAndroidApp = async (req: Request, res: Response): Promis
         });
 
         newImage.save();
-
-        // generate response
 
         return res.status(201).json(
             SingleApiResponse({

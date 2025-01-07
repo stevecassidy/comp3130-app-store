@@ -186,12 +186,13 @@ describe('AndroidApp Endpoints', () => {
       expect(response.status).toBe(201);
       expect(response.body.data.url).toBeDefined();
       
-
+      console.log('image URL', response.body.data.url);
+      
       // get the app and check that the image is listed
       const appResponse = await request(App)
-      .get(`/api/app/${createdAppId}`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(200);
+        .get(`/api/app/${createdAppId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200);
 
       expect(appResponse.body.data.images.length).toBe(1);
       expect(appResponse.body.data.images[0].url).toBe(response.body.data.url);

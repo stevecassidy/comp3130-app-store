@@ -1,5 +1,5 @@
 
-import {AndroidApp, CreateAndroidAppRequest, objectToAndroidApp, UpdateAndroidAppRequest, UploadAPKResponse} from '@app-store/shared-types';
+import {AndroidApp, CreateAndroidAppRequest, objectToAndroidApp, UpdateAndroidAppRequest, UploadAPKResponse, UploadImageResponse} from '@app-store/shared-types';
 import {API_BASE_URL} from '../config';
 import {getCurrentUser} from './users';
 
@@ -111,9 +111,30 @@ export const uploadAPK = async (id: string, apkFile: File): Promise<UploadAPKRes
       body: formData,
     });
     const data = await response.json();
-    return data.data;
+    return data.data as UploadAPKResponse;
   } else {
     throw new Error('User not logged in');
   }
 };
 
+
+export const uploadImage = async (id: string, role: string, imageFile: File): Promise<UploadImageResponse> => {
+  const url = `${API_BASE_URL}/api/app/${id}/image`;
+  const token = getCurrentUser()?.token;
+  if (token) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.set('role', role);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    const data = await response.json();
+    return data.data as UploadImageResponse;
+  } else {
+    throw new Error('User not logged in');
+  }
+};

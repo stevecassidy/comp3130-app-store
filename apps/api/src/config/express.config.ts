@@ -29,9 +29,6 @@ const App: Express = express();
 // Compress Bundle
 App.use(compression());
 
-// Middle for protection in vulnerabilities
-App.use(helmet());
-
 // Use cors
 App.use(cors());
 
