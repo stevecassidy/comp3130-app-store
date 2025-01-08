@@ -1,7 +1,8 @@
-import {AppBar, Button, Toolbar, Typography} from "@mui/material";
+import {AppBar, Button, IconButton, Toolbar, Typography} from "@mui/material";
 import {useContext} from "react";
 import {UserTokenContext} from "../contexts/userContext";
 import {useNavigate} from "react-router-dom";
+import HomeIcon from '@mui/icons-material/Home';
 
 export const NavBar = () => {
 
@@ -21,6 +22,7 @@ export const NavBar = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           COMP3130 App Store
         </Typography>
+        <IconButton color="inherit" href="/"><HomeIcon/></IconButton>
         {user ? (
           <>
           <Typography variant="body1" component="div" sx={{ flexGrow: 1 }}>
