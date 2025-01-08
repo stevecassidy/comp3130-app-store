@@ -5,11 +5,13 @@ import {AndroidApp} from "@app-store/shared-types";
 import {UploadAPK} from "./UploadAPK";
 import {API_BASE_URL} from "../config";
 import {UploadImage} from "./UploadImage";
+import markdown from 'markdown-it';
 
 
 export const AppView = () => {
   const appId = useParams().appId;
   const [app, setApp] = useState<AndroidApp>();
+  const md = markdown();
 
   useEffect(() => {
     const fetchApp = async () => {
@@ -37,7 +39,8 @@ export const AppView = () => {
       <p>Owner: {app.owner}</p>
       <p>Created: {app.dateCreated ? app.dateCreated.toLocaleString() : 'unknown'}</p>
 
-      <p>Description: {app.description}</p>
+      <h2>Description</h2>
+      <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />
 
       {app.apkFiles && app.apkFiles.map((apk) => (
         <div key={apk.url}>

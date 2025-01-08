@@ -3,10 +3,12 @@ import {getAndroidApps} from "../services/androidApps";
 import {useEffect, useState} from "react";
 import {Button, Card, CardActionArea, CardContent, CardHeader} from "@mui/material";
 import {Link} from "react-router-dom";
+import markdown from 'markdown-it';
 
 export const AppList = () => {
   const [apps, setApps] = useState<AndroidApp[]>([]);
 
+  const md = markdown();
 
   useEffect(() => {
     const fetchApps = async () => {
@@ -39,7 +41,7 @@ export const AppList = () => {
                 <dt>Owner</dt> <dd>{app.owner}</dd>
                 <dt>Created</dt> <dd>{app.dateCreated ? app.dateCreated.toLocaleString() : ''}</dd>
                 </dl>
-                <p>{app.description}</p>
+                <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />
               </CardContent>
         </Card>
       ))}

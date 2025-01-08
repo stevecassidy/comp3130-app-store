@@ -42,9 +42,7 @@ export const getCurrentUser = () => {
     if (user) {
       const parsedToken = jwtDecode(user.token);
       const expire = new Date(parsedToken.exp * 1000);
-      console.log('expires', expire);
       if (expire < new Date()) {
-        console.log('expired');
         localStorage.removeItem(USER_KEY);
         return null;
       }

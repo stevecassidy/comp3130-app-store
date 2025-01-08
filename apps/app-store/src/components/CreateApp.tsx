@@ -5,6 +5,7 @@ import {createAndroidApp} from "../services/androidApps";
 import {Box, FormControl, FormLabel, TextField} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {UserToken} from "../services/users";
+import {MarkdownEditor} from "./MarkdownEditor";
 
 
 export const CreateApp = () => {
@@ -14,7 +15,7 @@ export const CreateApp = () => {
   const [user, setUser] = useState<UserToken | null>(null);
   const [app, setApp] = useState<CreateAndroidAppRequest>({
     name: '',
-    description: '',
+    description: 'Describe your app... __bold__ *italic*',
     owner: '',
   });
 
@@ -31,6 +32,12 @@ export const CreateApp = () => {
   const updateApp = (property: string) => {
     return (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setApp({...app, [property]: event.target.value});
+    }
+  };
+
+  const updateMarkdown = (property: string) => {
+    return (value: string) => {
+      setApp({...app, [property]: value});
     }
   };
 
@@ -75,14 +82,9 @@ export const CreateApp = () => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="description">Description</FormLabel>
-          <TextField 
-            multiline
-            rows={5} 
-            id="description" 
-            name="description" 
-            value={app.description} 
-            onChange={updateApp('description')} 
-          />
+
+          <MarkdownEditor value={app.description} onChange={updateMarkdown('description')} />
+
         </FormControl>
         <div>
           <input type="submit" value="Create" />
