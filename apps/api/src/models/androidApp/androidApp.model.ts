@@ -15,8 +15,16 @@ const androidAppSchema = new Schema<IAndroidApp>({
         type: String,
         required: true,
     },
+    instructions: {
+        type: String,
+        required: true,
+    },
     owner: {
         type: String,
+        required: true,
+    },
+    dataSafety: {
+        type: Object,
         required: true,
     },
     dateCreated: {

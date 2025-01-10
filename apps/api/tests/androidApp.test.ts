@@ -18,7 +18,30 @@ describe('AndroidApp Endpoints', () => {
   const testApp = {
     name: 'Test App',
     description: 'Test Description',
-    owner: testUser.email
+    instructions: 'Test Instructions',
+    owner: testUser.email,
+    dataSafety: {
+        appActivity: {
+          shared: false,
+          information: 'Information',
+        },
+        personalInformation: {
+          shared: true,
+          information: 'Information',
+        },
+        location: {
+          shared: false,
+          information: 'Information',
+        },
+        appInfoPerformance: {
+          shared: false,
+          information: 'Information',
+        },
+        deviceInformation: {
+          shared: false,
+          information: 'Information',
+        },
+    }
   };
 
   beforeEach(async () => {
@@ -89,14 +112,23 @@ describe('AndroidApp Endpoints', () => {
     const newApp = {
       name: 'New Test App',
       description: 'Test Description',
-      owner: testUser.email
+      instructions: 'Test Instructions',
+      owner: testUser.email,
+      dataSafety: testApp.dataSafety,
     };
 
     await request(App)
       .post('/api/app/')
       .set('Authorization', `Bearer ${authToken}`)
       .send(newApp)
-      .expect(201);
+      .expect(201)
+      .expect((res) => {
+        expect(res.body.data.name).toBe(newApp.name);
+        expect(res.body.data.instructions).toBe(newApp.instructions);
+      });
+
+
+
   });
 
   test('PUT /api/app/:id - update app with auth', async () => {
@@ -185,8 +217,6 @@ describe('AndroidApp Endpoints', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.data.url).toBeDefined();
-      
-      console.log('image URL', response.body.data.url);
       
       // get the app and check that the image is listed
       const appResponse = await request(App)

@@ -1,6 +1,7 @@
 //#region Import
 import mongoose from "mongoose";
 import { IBase } from "../base.interface";
+import {AndroidAppDataSafety} from "@app-store/shared-types";
 //#endregion
 
 // Model
@@ -9,7 +10,9 @@ export interface IAndroidApp extends IBase {
     name: string;
     slug: string;
     description: string;
+    instructions: string;
     owner: string; // email address of User
+    dataSafety?: AndroidAppDataSafety;
     apkFiles?: mongoose.Types.ObjectId[];
 }
 

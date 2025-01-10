@@ -5,3 +5,4 @@ apps/*/build
 .turbo
 packages/shared-types/dist
 apps/api/.env
+apps/api/assets

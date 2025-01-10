@@ -6,7 +6,6 @@ import {getCurrentUser} from './users';
 export const getAndroidApps = async (): Promise<AndroidApp[]> => {
   const url = `${API_BASE_URL}/api/app/_/1`;
   const user = getCurrentUser();
-  console.log(user);
   if (user) {
     const response = await fetch(url, {
       headers: {

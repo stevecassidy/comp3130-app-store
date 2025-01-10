@@ -176,8 +176,10 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
         const newAndroidApp = new AndroidAppModel({
             name: body.name,
             slug: appSlug,
-            description: body.description,
+            description: body.description || '',
+            instructions: body.instructions || '',
             owner: body.owner,
+            dataSafety: body.dataSafety || {},
             createdBy: currentUserId,
             dateCreated: new Date(),
         })

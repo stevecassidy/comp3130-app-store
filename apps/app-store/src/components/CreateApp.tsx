@@ -1,8 +1,8 @@
-import {CreateAndroidAppRequest} from "@app-store/shared-types";
+import {AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry} from "@app-store/shared-types";
 import {useContext, useEffect, useState} from "react";
 import {UserTokenContext} from "../contexts/userContext";
 import {createAndroidApp} from "../services/androidApps";
-import {Box, FormControl, FormLabel, TextField} from "@mui/material";
+import {Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {UserToken} from "../services/users";
 import {MarkdownEditor} from "./MarkdownEditor";
@@ -15,8 +15,31 @@ export const CreateApp = () => {
   const [user, setUser] = useState<UserToken | null>(null);
   const [app, setApp] = useState<CreateAndroidAppRequest>({
     name: '',
-    description: 'Describe your app... __bold__ *italic*',
+    description: 'Describe your app...',
+    instructions: 'Instructions for reviewers...',
     owner: '',
+    dataSafety: {
+      appActivity: {
+        shared: false,
+        information: '',
+      },
+      personalInformation: {
+        shared: false,
+        information: '',
+      },
+      location: {
+        shared: false,
+        information: '',
+      },
+      appInfoPerformance: {
+        shared: false,
+        information: '',
+      },
+      deviceInformation: {
+        shared: false,
+        information: '',
+      },
+    }
   });
 
   useEffect(() => {
@@ -34,6 +57,8 @@ export const CreateApp = () => {
       setApp({...app, [property]: event.target.value});
     }
   };
+
+  
 
   const updateMarkdown = (property: string) => {
     return (value: string) => {
@@ -82,14 +107,136 @@ export const CreateApp = () => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="description">Description</FormLabel>
-
+          <p>Describe your app for potential users.</p>
           <MarkdownEditor value={app.description} onChange={updateMarkdown('description')} />
-
         </FormControl>
+
+        <FormControl>
+          <FormLabel htmlFor="description">Reviewer Instructions</FormLabel>
+          <p>Provide instructions for reviewers of your app including usernames and
+            passwords if appropriate.
+          </p>
+          <MarkdownEditor value={app.instructions} onChange={updateMarkdown('instructions')} />
+        </FormControl>
+
+        <h2>Data Safety</h2>
+
+        <p>You need to provide information about what, if any, data your app 
+          collects from your users and how that data is used. Check all 
+          questions below that apply to your app and provide explanatory text
+          for your users in each case.</p>
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
+          property="appActivity"
+          label="Data about how often users use the app and what they are doing."
+          />
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
+          property="personalInformation"
+          label="Personal information about users."
+          />
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
+          property="location"
+          label="Data about user's location while using the app."
+          />
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
+          property="appInfoPerformance"
+          label="Data about how the app is performing or error reports."
+          />
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
+          property="deviceInformation"
+          label="Data about the device the user is using."
+          />
+
         <div>
           <input type="submit" value="Create" />
         </div>
       </Box>
     </div>
+  )
+}
+
+interface DataSafetyEntryProps {
+  property: keyof AndroidAppDataSafety;
+  label: string;
+  app: CreateAndroidAppRequest;
+  setApp: (app: CreateAndroidAppRequest) => void;
+}
+
+
+const DataSafetyFormEntry = (props: DataSafetyEntryProps) => {
+
+  const {app, setApp, property, label} = props;
+
+  // event handler for checkbox 
+  const updateDataSafetyShared = () => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      setApp({
+        ...app,
+        dataSafety: {
+          ...app.dataSafety,
+          [property]: {
+            ...app.dataSafety[property],
+            shared: event.target.checked
+          }
+        }
+      });
+    };
+  };
+  
+  const updateDataSafetyInfo = () => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      setApp({
+        ...app,
+        dataSafety: {
+          ...app.dataSafety,
+          [property]: {
+            ...app.dataSafety[property],
+            information: event.target.value
+          }
+        }
+      });
+    };
+  };
+
+  return (
+        <FormControl
+        sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          <FormControlLabel
+          label={label}
+          control={
+          <Checkbox name="dataSafetyAppActivity"
+            checked={app.dataSafety[property].shared} 
+            onChange={updateDataSafetyShared()} />
+          }
+          />
+
+            {app.dataSafety[property].shared &&
+              <TextField
+                fullWidth
+                name="dataSafetyAppActivityInfo"
+                value={app.dataSafety[property].information} 
+                onChange={updateDataSafetyInfo()} 
+                placeholder="Provide an explanation about what data is collected and why."/>
+            }
+        </FormControl>
   )
 }

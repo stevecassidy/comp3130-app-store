@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {getAndroidApp} from "../services/androidApps";
 import {useParams} from "react-router-dom";
-import {AndroidApp} from "@app-store/shared-types";
+import {AndroidApp, AndroidAppDataSafety} from "@app-store/shared-types";
 import {UploadAPK} from "./UploadAPK";
 import {API_BASE_URL} from "../config";
 import {UploadImage} from "./UploadImage";
@@ -55,6 +55,44 @@ export const AppView = () => {
       ))}
 
 
+      <h2>Data Safety</h2>
+
+      <p>Here's more information that the developer has provided about
+        the kinds of data that this app may collect and share, and
+        security practices that the app may follow.</p>
+
+      <DataSafety
+          app={app}
+          property="appActivity"
+          label="Data about how often users use the app and what they are doing."
+          />
+
+        <DataSafety
+          app={app}
+          property="personalInformation"
+          label="Personal information about users."
+          />
+
+        <DataSafety
+          app={app}
+          property="location"
+          label="Data about user's location while using the app."
+          />
+
+        <DataSafety
+          app={app}
+          property="appInfoPerformance"
+          label="Data about how the app is performing or error reports."
+          />
+
+        <DataSafety
+          app={app}
+          property="deviceInformation"
+          label="Data about the device the user is using."
+          />
+
+
+
       {appId && <UploadAPK appId={appId} />}
 
       {appId && <UploadImage appId={appId} role="icon" />}
@@ -64,4 +102,19 @@ export const AppView = () => {
 
     </div>
   );
+}
+
+
+interface DSProps {app: AndroidApp, property: keyof AndroidAppDataSafety, label: string};
+
+const DataSafety = ({app, property, label}: DSProps) => {
+
+  if (app?.dataSafety[property].shared)
+    return (
+      <div>
+        <h3>{label}</h3>
+        <p>{app?.dataSafety[property].information}</p>
+      </div>
+    )
+    else return <></>;
 }
