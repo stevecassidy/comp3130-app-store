@@ -5,9 +5,11 @@ import {
   ListsToggle, 
   markdownShortcutPlugin, 
   MDXEditor, 
+  MDXEditorMethods, 
   toolbarPlugin, 
   UndoRedo} from "@mdxeditor/editor";
 import '@mdxeditor/editor/style.css';
+import {useEffect, useRef} from "react";
 
 interface MarkdownEditorProps {
   value: string;
@@ -16,25 +18,34 @@ interface MarkdownEditorProps {
 
 export const MarkdownEditor = ({value, onChange}: MarkdownEditorProps) => {
 
+  const ref = useRef<MDXEditorMethods>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.setMarkdown(value);
+    }
+  })
+
   return (
   <MDXEditor 
-  markdown={value} 
-  onChange={onChange}
-  plugins={[
-    listsPlugin(),
-    headingsPlugin(),
-    markdownShortcutPlugin(),
-    toolbarPlugin({
-      toolbarClassName: 'my-classname',
-      toolbarContents: () => (
-        <>
-          {' '}
-          <UndoRedo />
-          <BoldItalicUnderlineToggles />
-          <ListsToggle />
-        </>
-      )
-    }),
-  ]}
+    markdown={value}
+    ref={ref}
+    onChange={onChange}
+    plugins={[
+      listsPlugin(),
+      headingsPlugin(),
+      markdownShortcutPlugin(),
+      toolbarPlugin({
+        toolbarClassName: 'my-classname',
+        toolbarContents: () => (
+          <>
+            {' '}
+            <UndoRedo />
+            <BoldItalicUnderlineToggles />
+            <ListsToggle />
+          </>
+        )
+      }),
+    ]}
   />);
 };

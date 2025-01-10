@@ -62,10 +62,9 @@ export const createAndroidApp = async (
 };
 
 export const updateAndroidApp = async (
-  id: string,
   androidApp: UpdateAndroidAppRequest
 ): Promise<AndroidApp> => {
-  const url = `${API_BASE_URL}/api/app/${id}`;
+  const url = `${API_BASE_URL}/api/app/${androidApp.id}`;
   const token = getCurrentUser()?.token;
   if (token) {
     const response = await fetch(url, {

@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {getAndroidApp} from "../services/androidApps";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {AndroidApp, AndroidAppDataSafety} from "@app-store/shared-types";
 import {UploadAPK} from "./UploadAPK";
 import {API_BASE_URL} from "../config";
@@ -34,6 +34,9 @@ export const AppView = () => {
     <div>
       <h1>{app.name}</h1>
 
+      <Link to={`/edit/${appId}`}>Edit</Link>
+
+
       {iconURL && <img src={`${API_BASE_URL}${iconURL}`} width="100" height="100" alt="App Icon"/>}
 
       <p>Owner: {app.owner}</p>
@@ -54,6 +57,9 @@ export const AppView = () => {
         </div>
       ))}
 
+      <h2>Reviewer Information</h2>
+
+      {app.instructions}
 
       <h2>Data Safety</h2>
 

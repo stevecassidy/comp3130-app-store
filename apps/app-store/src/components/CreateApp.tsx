@@ -1,56 +1,69 @@
-import {AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry} from "@app-store/shared-types";
+import {AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {useContext, useEffect, useState} from "react";
 import {UserTokenContext} from "../contexts/userContext";
-import {createAndroidApp} from "../services/androidApps";
+import {createAndroidApp, getAndroidApp, updateAndroidApp} from "../services/androidApps";
 import {Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {UserToken} from "../services/users";
 import {MarkdownEditor} from "./MarkdownEditor";
 
 
+const appTemplate = {
+  name: '',
+  description: 'Describe your app...',
+  instructions: 'Instructions for reviewers...',
+  owner: '',
+  dataSafety: {
+    appActivity: {
+      shared: false,
+      information: '',
+    },
+    personalInformation: {
+      shared: false,
+      information: '',
+    },
+    location: {
+      shared: false,
+      information: '',
+    },
+    appInfoPerformance: {
+      shared: false,
+      information: '',
+    },
+    deviceInformation: {
+      shared: false,
+      information: '',
+    },
+  }
+};
+
+
 export const CreateApp = () => {
 
+  const appId = useParams().appId;
   const navigate = useNavigate();
   const {currentUser} = useContext(UserTokenContext);
   const [user, setUser] = useState<UserToken | null>(null);
-  const [app, setApp] = useState<CreateAndroidAppRequest>({
-    name: '',
-    description: 'Describe your app...',
-    instructions: 'Instructions for reviewers...',
-    owner: '',
-    dataSafety: {
-      appActivity: {
-        shared: false,
-        information: '',
-      },
-      personalInformation: {
-        shared: false,
-        information: '',
-      },
-      location: {
-        shared: false,
-        information: '',
-      },
-      appInfoPerformance: {
-        shared: false,
-        information: '',
-      },
-      deviceInformation: {
-        shared: false,
-        information: '',
-      },
-    }
-  });
+  const [app, setApp] = useState<CreateAndroidAppRequest>(appTemplate);
+
+  // a flag to differentiate between creating a new app and updating an existing one
+  const updating = appId !== undefined;
 
   useEffect(() => {
+    const getApp = async () => {
+      if (appId) {
+        const app = await getAndroidApp(appId);
+        setApp(app);
+      }
+    };
+    getApp();
     const user = currentUser();
     if (!user) {
       navigate({pathname: '/login'});
     } else {
       setUser(user);
     }
-  }, [currentUser, navigate]);
-
+  }, [appId, currentUser, navigate]);
 
   const updateApp = (property: string) => {
     return (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,23 +71,26 @@ export const CreateApp = () => {
     }
   };
 
-  
-
   const updateMarkdown = (property: string) => {
     return (value: string) => {
       setApp({...app, [property]: value});
     }
   };
 
-  const createApp = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (user) {
-      const newApp = {...app, owner: user?.user.email};
-      console.log('Creating app', newApp);
-      createAndroidApp(newApp).then(() => {
-        console.log('App created, navigating to home');
-        navigate({pathname: '/'});
-      });
+
+      if (updating) {
+        const newApp: UpdateAndroidAppRequest = {...app, id: appId, owner: user?.user.email};
+        await updateAndroidApp(newApp);
+        navigate({pathname: `/app/${appId}`});
+      } else {
+        const newApp = {...app, owner: user?.user.email};
+        createAndroidApp(newApp).then((response) => {
+          navigate({pathname: `/app/${response.id}`});
+        });
+      }
     }
   };
 
@@ -83,7 +99,7 @@ export const CreateApp = () => {
       <h1>Create App</h1>          
       <Box
             component="form"
-            onSubmit={createApp}
+            onSubmit={handleSubmit}
             noValidate
             sx={{
               display: 'flex',
@@ -112,7 +128,7 @@ export const CreateApp = () => {
         </FormControl>
 
         <FormControl>
-          <FormLabel htmlFor="description">Reviewer Instructions</FormLabel>
+          <FormLabel htmlFor="reviewer">Reviewer Instructions</FormLabel>
           <p>Provide instructions for reviewers of your app including usernames and
             passwords if appropriate.
           </p>
@@ -162,7 +178,7 @@ export const CreateApp = () => {
           />
 
         <div>
-          <input type="submit" value="Create" />
+          <input type="submit" value={updating ? "Update" : "Create"}/>
         </div>
       </Box>
     </div>
