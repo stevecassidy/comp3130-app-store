@@ -13,6 +13,7 @@ describe('AndroidApp Endpoints', () => {
     email: 'test@example.com',
     password: 'Test123!',
     name: 'Test User',
+    salt: '',
   };
 
   const testApp = {

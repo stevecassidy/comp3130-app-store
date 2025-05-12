@@ -7,6 +7,7 @@ import { IBase } from "../base.interface";
 interface IUserBase extends IBase {
 	email: string;
 	password: string;
+	salt: string;
 	name: string;
 }
 

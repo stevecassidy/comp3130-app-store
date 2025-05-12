@@ -16,6 +16,7 @@ describe('Auth Endpoints', () => {
     email: 'test@example.com',
     password: 'Test123!',
     name: 'Test User',
+    salt: '',
   };
 
   beforeEach(async () => {

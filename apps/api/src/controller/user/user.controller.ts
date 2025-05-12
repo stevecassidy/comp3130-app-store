@@ -2,7 +2,7 @@
 import { UserModel } from "../../models/user/user.models";
 import { Request, Response } from "express";
 import { SingleApiResponse } from "../../helpers/response.helper";
-import CryptoJS from "crypto-js";
+import crypto from 'crypto';
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 import { IUser, IUserBase } from "../../interface/user/user.interface";
@@ -10,17 +10,25 @@ import { IUser, IUserBase } from "../../interface/user/user.interface";
 dotenv.config();
 //#endregion
 
+// Compute a password hash with a given salt
+export const hashPassword = (password: string, salt: string) => {
+	return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+}
+
+// generate a random salt value
+const generateSalt = (length=16) => {
+	return crypto.randomBytes(length).toString('hex');
+}
+
 /**
  * 
  * @param user 
  * @returns 
  */
 export const createUserRecord = async (user: IUserBase): Promise<IUser> => {
-	const password = CryptoJS.AES.encrypt(
-			user.password,
-			secretKey
-		).toString();
-	const newUser = new UserModel({...user, password: password,});
+	const salt = generateSalt();
+	const password = hashPassword(user.password, salt);
+	const newUser = new UserModel({...user, password: password, salt: salt});
 	await newUser.save();
 	return newUser;
 };
@@ -59,6 +67,7 @@ const CreateUser = async (req: Request, res: Response): Promise<Response> => {
 			email: req.body.email,
 			password: req.body.password,
 			name: req.body.name,
+			salt: '',
 			updatedBy: '1',
 			createdBy: '1'
 		})

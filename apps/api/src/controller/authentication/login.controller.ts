@@ -4,11 +4,11 @@ import { AccessTokenModel } from "../../models/access_token/access_token.model";
 import { Request, Response } from "express";
 import { SingleApiResponse } from "../../helpers/response.helper";
 import { IUser } from "../../interface/user/user.interface";
-import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 import * as dotenv from "dotenv";
 import { IAccessToken } from "../../interface/access_token/access_token.interface";
+import {hashPassword} from "../user/user.controller";
 dotenv.config();
 //#endregion
 
@@ -54,13 +54,12 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 			);
 
 		// Check if hash password is equal
-		const decyptedPassword = CryptoJS.AES.decrypt(
-			user.password,
-			secretKey
-		).toString(CryptoJS.enc.Utf8);
+		const pwHash = hashPassword(password, user.salt);
+
+		console.log('checking pw', user.password, pwHash);
 
 		// Flagger for password
-		if (password !== decyptedPassword)
+		if (user.password !== pwHash)
 			return res.status(200).json(
 				SingleApiResponse({
 					success: true,

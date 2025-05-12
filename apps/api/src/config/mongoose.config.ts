@@ -17,7 +17,6 @@ export const Connect = async () => {
 			{
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
-				keepAlive: true
 			} as ConnectOptions
 		);
 
