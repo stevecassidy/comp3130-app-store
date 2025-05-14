@@ -8,7 +8,6 @@ import helmet from "helmet";
 // Router
 import { AuthenticationRouter } from "../routes/auth/auth.routes";
 import { UserRouter } from "../routes/user/user.routes";
-import { StudentRouter } from '../routes/student/student.routes';
 import { AndroidAppRouter } from "../routes/androidApp/androidApp.routes";
 
 import CronConfig from "./cron.config";
@@ -60,9 +59,6 @@ App.use("/api/auth", AuthenticationRouter);
 
 // Users
 App.use("/api/user", UserRouter);
-
-// Student
-App.use('/api/student', StudentRouter);
 
 // AndroidApp
 App.use('/api/app', AndroidAppRouter);
