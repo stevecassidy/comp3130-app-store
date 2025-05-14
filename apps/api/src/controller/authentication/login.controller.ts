@@ -56,8 +56,6 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 		// Check if hash password is equal
 		const pwHash = hashPassword(password, user.salt);
 
-		console.log('checking pw', user.password, pwHash);
-
 		// Flagger for password
 		if (user.password !== pwHash)
 			return res.status(200).json(
