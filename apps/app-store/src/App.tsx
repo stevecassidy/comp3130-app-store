@@ -15,7 +15,10 @@ export default function App() {
 
   return (
     <UserContextProvider>
-        <BrowserRouter>
+        <BrowserRouter future={{
+    v7_startTransition: true,
+    v7_relativeSplatPath: true,
+  }}>
           <Container>
             <NavBar />
             <Box sx={{ my: 4 }}>
