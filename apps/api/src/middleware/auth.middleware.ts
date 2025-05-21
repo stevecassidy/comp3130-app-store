@@ -19,15 +19,19 @@ export const AuthMiddleware = async (
 	res: Response,
 	next: NextFunction
 ) => {
+	console.log('AuthMiddleware');
 	try {
 		const secretKey: Secret = `${process.env.TOKEN_KEY}`;
 		const token = req.header("Authorization")?.replace("Bearer ", "");
 
 		if (!token) throw new Error();
 
+		console.log('token', token);
 		// Decode token
 		// eslint-disable-next-line
 		const decoded = jwt.verify(token, secretKey) as any;
+
+		console.log('decoded jwt', decoded);
 
 		// Make request as CustomRequest
 		// Add decoded token to string property in CustomRequest
@@ -36,6 +40,7 @@ export const AuthMiddleware = async (
 		// Run next function
 		next();
 	} catch (err: unknown) {
+		console.log('Error in AuthMiddleware', err);
 		res.status(401).json(
 			SingleApiResponse({ success: false, data: null, statusCode: 401 })
 		);

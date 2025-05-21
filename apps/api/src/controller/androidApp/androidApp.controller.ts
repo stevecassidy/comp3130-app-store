@@ -151,7 +151,6 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
  * @returns Res
  */
 export const CreateAndroidApp = async (req: Request, res: Response): Promise<Response> => {
-
     // Extracting request
     const { id: currentUserId } = req as CustomRequest
     const body = req.body as CreateAndroidAppRequest

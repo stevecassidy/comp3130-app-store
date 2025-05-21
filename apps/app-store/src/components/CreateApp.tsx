@@ -12,6 +12,7 @@ const appTemplate = {
   name: '',
   description: 'Describe your app...',
   instructions: 'Instructions for reviewers...',
+  repoLink: '',
   owner: '',
   dataSafety: {
     appActivity: {
@@ -99,7 +100,6 @@ export const CreateApp = () => {
       <h1>Create App</h1>          
       <Box
             component="form"
-            onSubmit={handleSubmit}
             noValidate
             sx={{
               display: 'flex',
@@ -189,6 +189,8 @@ export const CreateApp = () => {
           property="deviceInformation"
           label="Data about the device the user is using."
           />
+
+        <p>You will be able to add screenshots etc. once the app has been created.</p>
 
         <div>
           <Button onClick={handleSubmit} variant="outlined">{updating ? "Update" : "Create"}</Button>

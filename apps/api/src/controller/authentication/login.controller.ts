@@ -61,14 +61,14 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 			userId: user._id
 		});
 
-		if (userAccessToken === null) {
+		// Token Generation
+		const token = jwt.sign(
+			{ id: user._id.toString() }, 
+			secretKey, 
+			{ expiresIn: "7d" }
+		);
 
-			// Token Generation
-			const token = jwt.sign(
-				{ id: user._id.toString() }, 
-				secretKey, 
-				{ expiresIn: "7d" }
-			);
+		if (userAccessToken === null) {
 
 			// Save Access Token
 			userAccessToken = new AccessTokenModel({
@@ -76,6 +76,9 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 				accessToken: token
 			});
 
+			await userAccessToken.save();
+		} else {
+			userAccessToken.accessToken = token;
 			await userAccessToken.save();
 		}
 

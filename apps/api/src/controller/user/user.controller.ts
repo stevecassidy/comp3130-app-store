@@ -73,7 +73,7 @@ const CreateUser = async (req: Request, res: Response): Promise<Response> => {
 		})
 
 		const token = jwt.sign({ id: user._id.toString() }, `${secretKey}`, {
-			expiresIn: "2h"
+			expiresIn: "7d"
 		});
 
 		return res.status(201).json(

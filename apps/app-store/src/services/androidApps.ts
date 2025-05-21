@@ -34,6 +34,7 @@ export const getAndroidApp = async (id: string): Promise<AndroidApp> => {
       },
     });
     const data = await response.json();
+    console.log(data);
     return objectToAndroidApp(data.data);
   } else {
     throw new Error('User not logged in');

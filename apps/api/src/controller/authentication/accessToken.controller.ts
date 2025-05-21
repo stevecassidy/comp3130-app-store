@@ -49,13 +49,12 @@ const AccessToken = async (req: Request, res: Response): Promise<Response> => {
             // Token Generation
             const user = { 
                 id: userAccessToken.userId.toString() 
-                
             }
             const token = jwt.sign(user, `${secretKey}`, {
                 expiresIn: "7d"
             });
 
-            console.log(token);
+            console.log("generated", token);
 
             return res.status(200).json(
                 SingleApiResponse({
