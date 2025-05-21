@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 import { ApiResponse, SingleApiResponse } from "../../helpers/response.helper";
 import { CustomRequest } from '../../interface/custom_request.interface'
 import {AndroidAppModel} from "../../models/androidApp/androidApp.model";
-import { IAndroidApp, IAndroidAppImage } from "../../interface/androidApp/androidApp.interface";
+import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync} from "fs";
 import {join} from "path";
-import {APK_DIR, ASSET_DIR, IMAGE_DIR} from "../../config/express.config";
+import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
 import {AndroidAppApkModel} from "../../models/androidApp/apkFile.model";
 import {CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
@@ -182,6 +182,7 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
             dataSafety: body.dataSafety || {},
             createdBy: currentUserId,
             dateCreated: new Date(),
+            repoLink: body.repoLink || '',
         })
         // Save androidApp object
         await newAndroidApp.save()
@@ -227,9 +228,14 @@ export const UpdateAndroidApp = async (req: Request, res: Response): Promise<Res
             { _id: appId },
             {
                 name: body.name,
-                description: body.description,
                 owner: currentUserId,
-                dateUpdated: Date.now()
+                dateUpdated: Date.now(),
+                repoLink: body.repoLink || '',
+                description: body.description || '',
+                instructions: body.instructions || '',
+                dataSafety: body.dataSafety || {},
+                createdBy: currentUserId,
+                dateCreated: new Date(),
             },
             { new: true }
         )

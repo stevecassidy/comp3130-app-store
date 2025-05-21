@@ -2,7 +2,7 @@ import {AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry, UpdateAn
 import {useContext, useEffect, useState} from "react";
 import {UserTokenContext} from "../contexts/userContext";
 import {createAndroidApp, getAndroidApp, updateAndroidApp} from "../services/androidApps";
-import {Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
+import {Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
 import {UserToken} from "../services/users";
 import {MarkdownEditor} from "./MarkdownEditor";
@@ -77,7 +77,7 @@ export const CreateApp = () => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (user) {
 
@@ -119,6 +119,19 @@ export const CreateApp = () => {
             fullWidth
             variant="outlined"
             onChange={updateApp('name')} 
+        />
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="repoLink">GitHub Link</FormLabel>
+          <TextField 
+            id="repoLink" 
+            name="repoLink" 
+            value={app.repoLink}                
+            
+            required
+            fullWidth
+            variant="outlined"
+            onChange={updateApp('repoLink')} 
         />
         </FormControl>
         <FormControl>
@@ -178,7 +191,7 @@ export const CreateApp = () => {
           />
 
         <div>
-          <input type="submit" value={updating ? "Update" : "Create"}/>
+          <Button onClick={handleSubmit} variant="outlined">{updating ? "Update" : "Create"}</Button>
         </div>
       </Box>
     </div>

@@ -52,8 +52,10 @@ const AccessToken = async (req: Request, res: Response): Promise<Response> => {
                 
             }
             const token = jwt.sign(user, `${secretKey}`, {
-                expiresIn: "2h"
+                expiresIn: "7d"
             });
+
+            console.log(token);
 
             return res.status(200).json(
                 SingleApiResponse({

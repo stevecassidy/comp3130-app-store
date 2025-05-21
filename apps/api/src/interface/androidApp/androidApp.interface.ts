@@ -14,6 +14,7 @@ export interface IAndroidApp extends IBase {
     owner: string; // email address of User
     dataSafety?: AndroidAppDataSafety;
     apkFiles?: mongoose.Types.ObjectId[];
+    repoLink?: string;
 }
 
 // An APK file associated with the app, there may be more than one version

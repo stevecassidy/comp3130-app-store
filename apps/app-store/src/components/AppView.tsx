@@ -6,7 +6,11 @@ import {UploadAPK} from "./UploadAPK";
 import {API_BASE_URL} from "../config";
 import {UploadImage} from "./UploadImage";
 import markdown from 'markdown-it';
-
+import {List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import PersonIcon from '@mui/icons-material/Person';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SourceIcon from '@mui/icons-material/Source';
+import EditIcon from '@mui/icons-material/Edit';
 
 export const AppView = () => {
   const appId = useParams().appId;
@@ -32,15 +36,40 @@ export const AppView = () => {
 
   return (
     <div>
-      <h1>{app.name}</h1>
+      <h1>{app.name} <Link to={`/edit/${appId}`}><EditIcon /></Link></h1>
 
-      <Link to={`/edit/${appId}`}>Edit</Link>
-
+      
 
       {iconURL && <img src={`${API_BASE_URL}${iconURL}`} width="100" height="100" alt="App Icon"/>}
 
-      <p>Owner: {app.owner}</p>
-      <p>Created: {app.dateCreated ? app.dateCreated.toLocaleString() : 'unknown'}</p>
+      <List>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Owner: " + app.owner} />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+           <ListItemButton>
+              <ListItemIcon>
+                <CalendarTodayIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Created: " + (app.dateCreated ? app.dateCreated.toLocaleString() : 'unknown')} />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+           <ListItemButton>
+              <ListItemIcon>
+                <SourceIcon />
+              </ListItemIcon>
+              <ListItemText primary={app.repoLink ? (<a href={app.repoLink}>GitHub</a>) : 'None'} />
+            </ListItemButton>
+          </ListItem>
+          </List>
 
       <h2>Description</h2>
       <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />

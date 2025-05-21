@@ -11,6 +11,7 @@ export interface AndroidApp extends APIBase {
   apkFiles?: AndroidAppApk[];
   images?: AndroidAppImage[];
   dataSafety: AndroidAppDataSafety;
+  repoLink?: string;
 }
 
 export interface DataSafetyEntry {
@@ -41,6 +42,7 @@ export interface CreateAndroidAppRequest extends APIBase {
   instructions: string;
   owner: string;
   dataSafety: AndroidAppDataSafety;
+  repoLink?: string;
 }
 
 export interface UpdateAndroidAppRequest extends APIBase {
@@ -49,6 +51,8 @@ export interface UpdateAndroidAppRequest extends APIBase {
   description: string;
   instructions: string;
   owner: string;
+  dataSafety: AndroidAppDataSafety;
+  repoLink?: string;
 }
 
 export interface UploadAPKResponse {

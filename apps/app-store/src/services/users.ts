@@ -11,7 +11,6 @@ export interface UserToken {
 
 const USER_KEY = 'usertoken';
 
-
 /**
  * Store the user token, updating the currently logged in user
  * 
@@ -41,8 +40,8 @@ export const getCurrentUser = () => {
     const user = JSON.parse(userToken) as UserToken;
     if (user) {
       const parsedToken = jwtDecode(user.token);
-      const expire = new Date(parsedToken.exp * 1000);
-      if (expire < new Date()) {
+      const expire = new Date(parsedToken.exp);
+      if (expire > new Date()) {
         localStorage.removeItem(USER_KEY);
         return null;
       }

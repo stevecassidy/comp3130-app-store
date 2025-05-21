@@ -7,22 +7,11 @@ import { IUser } from "../../interface/user/user.interface";
 import jwt from "jsonwebtoken";
 
 import * as dotenv from "dotenv";
-import { IAccessToken } from "../../interface/access_token/access_token.interface";
 import {hashPassword} from "../user/user.controller";
 dotenv.config();
 //#endregion
 
 const secretKey = process.env.TOKEN_KEY as string;
-
-const generateToken = (user: IUser) => {
-
-		// Token Generation
-		const token = jwt.sign({ id: user._id.toString() }, `${secretKey}`, {
-			expiresIn: "2h"
-		});
-
-		return token;
-	}
 
 
 /**

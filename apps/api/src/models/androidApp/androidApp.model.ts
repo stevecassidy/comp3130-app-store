@@ -34,6 +34,10 @@ const androidAppSchema = new Schema<IAndroidApp>({
     dateUpdated: {
         type: Date,
         required: false,
+    },
+    repoLink: {
+        type: String,
+        required: false,
     }
   }, {
     timestamps: true,

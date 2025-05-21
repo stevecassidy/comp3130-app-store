@@ -1,21 +1,19 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import ForgotPassword from './ForgotPassword.tsx';
+import {styled} from '@mui/material/styles';
 import {API_BASE_URL} from '../config.tsx';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {useContext} from 'react';
 import {UserTokenContext} from '../contexts/userContext.tsx';
+import {Alert} from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -64,17 +62,9 @@ export default function SignIn() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const {login} = useContext(UserTokenContext);
-  
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -89,12 +79,11 @@ export default function SignIn() {
         password: data.get('password'),
       }
     ).then(response => {
-      console.log(response.data);
       if (response.data.statusCode === 200) {
         login(response.data.data);
         navigate('/');
       } else {
-        console.log('login error');
+        setErrorMessage('Invalid login credentials');
       }
     }).catch(error => {
       console.log(error);
@@ -131,6 +120,7 @@ export default function SignIn() {
 
   return (
       <SignInContainer direction="column" justifyContent="space-between">
+        {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
         <Card variant="outlined">
           <Typography
             component="h1"
@@ -184,7 +174,6 @@ export default function SignIn() {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
               fullWidth
@@ -193,19 +182,6 @@ export default function SignIn() {
             >
               Sign in
             </Button>
-          </Box>
-          <Divider>or</Divider>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/signup"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
-                Sign up
-              </Link>
-            </Typography>
           </Box>
         </Card>
       </SignInContainer>
