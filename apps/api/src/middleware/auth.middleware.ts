@@ -23,7 +23,7 @@ export const AuthMiddleware = async (
 		const secretKey: Secret = `${process.env.TOKEN_KEY}`;
 		const token = req.header("Authorization")?.replace("Bearer ", "");
 
-		if (!token) throw new Error();
+		if (!token) throw new Error('no Auth Token');
 		// Decode token
 		// eslint-disable-next-line
 		const decoded = jwt.verify(token, secretKey) as any;
@@ -35,7 +35,7 @@ export const AuthMiddleware = async (
 		// Run next function
 		next();
 	} catch (err: unknown) {
-		console.log('Error in AuthMiddleware', err);
+		//console.log('Auth Error', err)
 		res.status(401).json(
 			SingleApiResponse({ success: false, data: null, statusCode: 401 })
 		);

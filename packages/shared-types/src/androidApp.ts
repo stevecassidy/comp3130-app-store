@@ -1,14 +1,19 @@
 // API Types - what gets sent over the wire
 import {APIBase} from './base';
 
-
-export interface AndroidApp extends APIBase {
+export interface UserSummaryDetails {
   id: string;
   name: string;
+  email: string;
+}
+
+export interface AndroidApp extends APIBase {
+  id?: string;
+  name: string;
   description: string;
+  owner?: UserSummaryDetails;
   instructions: string;
-  owner: string;
-  apkFiles?: AndroidAppApk[];
+  apkFile?: AndroidAppApk;
   images?: AndroidAppImage[];
   dataSafety: AndroidAppDataSafety;
   repoLink?: string;
@@ -55,6 +60,12 @@ export interface UpdateAndroidAppRequest extends APIBase {
   repoLink?: string;
 }
 
+export interface AddReviewForAndroidAppRequest extends APIBase {
+  appID: string;
+  rating: number;
+  comment: string;
+}
+
 export interface UploadAPKResponse {
   appID: string;
   url: string;
@@ -79,3 +90,11 @@ export const objectToAndroidApp = (data: {dateUpdated: string, dateCreated: stri
     dateCreated: new Date(data.dateCreated),
   } as AndroidApp;
 };
+
+export interface AppReview extends APIBase {
+  appID: string;
+  userID: string;
+  rating: number;
+  comment: string;
+  dateCreated: Date;
+}

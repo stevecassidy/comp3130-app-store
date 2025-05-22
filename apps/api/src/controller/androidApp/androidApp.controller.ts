@@ -4,13 +4,13 @@ import { ApiResponse, SingleApiResponse } from "../../helpers/response.helper";
 import { CustomRequest } from '../../interface/custom_request.interface'
 import {AndroidAppModel} from "../../models/androidApp/androidApp.model";
 import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
-import {mkdirSync, renameSync} from "fs";
+import {mkdirSync, renameSync, unlinkSync} from "fs";
 import {join} from "path";
 import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
-import {AndroidAppApkModel} from "../../models/androidApp/apkFile.model";
-import {CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AddReviewForAndroidAppRequest, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
 import {generateAppSlug} from "../../helpers/appslug.helper";
+import {AppReviewModel} from "../../models/androidApp/review.model";
 
 //#endregion
 
@@ -118,16 +118,29 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
     try {
         const app = await AndroidAppModel
             .findById<IAndroidApp>(id)
-            .populate('apkFiles')
+            .populate('owner')
             .populate('images');
 
-        return res.status(200).json(
-            SingleApiResponse({
-                success: true,
-                data: app,
-                statusCode: 200
-            })
-        );
+        if (app) {
+            // rewrite apkFile to a URL
+            if (app.apkFile) app.apkFile = `/assets/apk/${app.apkFile}`
+
+            return res.status(200).json(
+                SingleApiResponse({
+                    success: true,
+                    data: app,
+                    statusCode: 200
+                })
+            );
+        } else {
+            return res.status(404).json(
+                SingleApiResponse({
+                    success: false,
+                    data: null,
+                    statusCode: 404
+                })
+            );
+        }
     } catch (error: unknown) {
         console.error(error);
         return res.status(500).json(
@@ -177,7 +190,7 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
             slug: appSlug,
             description: body.description || '',
             instructions: body.instructions || '',
-            owner: body.owner,
+            owner: currentUserId,
             dataSafety: body.dataSafety || {},
             createdBy: currentUserId,
             dateCreated: new Date(),
@@ -320,29 +333,45 @@ export const AddAPKForAndroidApp = async (req: Request, res: Response): Promise<
     try {
         // TODO: validate the apk
 
+        // get the app, check it's owned by this user
+        const app = await AndroidAppModel.findById(appId);
+        if (!app || app?.owner._id.toString() !== currentUserId) {
+            return res.status(404).json(
+                SingleApiResponse({
+                    success: false,
+                    data: null,
+                    statusCode: 404
+                })
+            );
+        }
+        
+        // if there is already an apk, delete it
+        if (app.apkFile) {
+            try {
+                unlinkSync(join(APK_DIR, app.apkFile));
+            } catch (error) {
+                console.error(error);
+            }
+        }
         // move to the final location
+        const apkFilename = `${apk.filename}.apk`;
+        const apkPath = join(APK_DIR, apkFilename);
+
         mkdirSync(APK_DIR, { recursive: true });
-        const apkPath = join(APK_DIR, apk.filename);
         renameSync(apk.path, apkPath);
 
-
-        // create db record for apk
-        const newApk = new AndroidAppApkModel({
-            filename: apk.filename,
-            appId,
-            createdBy: currentUserId,
-        });
-
-        newApk.save();
+        const apkURL = `/assets/apk/${apkFilename}`;
+        // update the app
+        app.apkFile = apkFilename;
+        await app.save();
 
         // generate response
-
         return res.status(201).json(
             SingleApiResponse({
                 success: true,
                 data: {
                     appId,
-                    url: `/assets/apk/${apk.filename}`,
+                    url: apkURL,
                 },
                 statusCode: 201
             })
@@ -418,4 +447,55 @@ export const AddImageForAndroidApp = async (req: Request, res: Response): Promis
             })
         );
     }
+}
+
+
+export const AddReviewForAndroidApp = async (req: Request, res: Response): Promise<Response> => {
+
+    // Extracting request
+    const { id: currentUserId } = req as CustomRequest
+    const appId = req.params.id as string;
+    const { rating, comment } = req.body as AddReviewForAndroidAppRequest;
+
+    // reject if there is no valid users
+    if (!currentUserId) {
+        return res.status(401).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 401,
+            }));
+    }
+
+    // confirm that the app exists
+    const app = await AndroidAppModel.findById(appId);
+    if (!app) {
+        return res.status(404).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 404,
+            }));
+    }
+
+    // create a new review record
+    const newReview = new AppReviewModel({
+        appId,
+        rating,
+        comment,
+        userId: currentUserId,
+    });
+    newReview.save();
+
+    return res.status(201).json(
+        SingleApiResponse({
+            success: true,
+            data: {
+                appId,
+                rating,
+                comment,
+            },
+            statusCode: 201
+        })
+    );
 }

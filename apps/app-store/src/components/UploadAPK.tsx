@@ -1,64 +1,86 @@
-import {Box, Button, FormControl} from "@mui/material";
+import {Alert, Box, Button, FormControl} from "@mui/material";
 import {useState} from "react";
 import {uploadAPK} from "../services/androidApps";
-import {UploadAPKResponse} from "@app-store/shared-types";
+import {AndroidAppApk} from "@app-store/shared-types";
+import {API_BASE_URL} from "../config";
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 
-export const UploadAPK = ({appId}: {appId: string}) => {
+export const UploadAPK = ({appId, apkFile, updateApp, isOwner}:
+  {
+    appId: string, 
+    apkFile: AndroidAppApk | undefined, 
+    updateApp: (appId: string | undefined) => void,
+    isOwner: boolean,
+  }) => {
 
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string>('');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Uploading APK', appId);
     if (file)
-      uploadAPK(appId, file).then((response: UploadAPKResponse) => {
-        console.log('APK uploaded', response);
+      uploadAPK(appId, file).then(() => {
+        updateApp(appId);
+        setFile(null);
         setMessage("APK Successfully uploaded")
       });
   };
 
   const updateFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Uploading APK', event.target.files);
     setFile(event.target.files?.[0] || null);
   };
+  /* if user is the owner show an upload form */
 
   return (
-    <div>
-      <h1>Upload APK</h1>
-
+    <>
+      {message && <Alert onClose={() => {setMessage('')}}>{message}</Alert>}
       <Box
             component="form"
             onSubmit={handleSubmit}
             noValidate
             sx={{
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'row',
               width: '100%',
               gap: 2,
             }}
           >
-            <FormControl>
-            <Button variant="contained" component="label">
-            Select APK File 
-            {file && <span>:{file.name}</span>}
-              <input
-                  hidden
-                  id="apk-file-input"
-                  multiple
-                  type="file"
-                  name="apk"
-                  onChange={updateFile}
-                  />
+          {apkFile &&
+              <Button
+                aria-label='APK Download'
+                size="large"
+                href={`${API_BASE_URL}${apkFile}`}
+                download="app.apk"
+                startIcon={<PhoneAndroidIcon />}
+                >
+                Download APK  
                 </Button>
-            </FormControl>
-            {message && <p>{message}</p>}
-            <FormControl>
-              <Button type="submit" variant="contained">Upload</Button>
-            </FormControl>
+          }
+          {isOwner && (<>
+            {!file && 
+              <FormControl>
+                <Button variant="contained" component="label">
+                  {apkFile ? "Update APK File" : "Select APK File"}
+                <input
+                    hidden
+                    id="apk-file-input"
+                    multiple
+                    type="file"
+                    name="apk"
+                    onChange={updateFile}
+                    />
+                  </Button>
+              </FormControl>
+            }
+            {file &&
+              <FormControl>
+                <Button type="submit" variant="contained">Upload {file.name}</Button>
+              </FormControl>
+            }
+            </>)
+          }
       </Box>
-    </div>
-
+    </>
   );
 
 }

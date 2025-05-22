@@ -1,4 +1,4 @@
-import {AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AndroidApp, AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {useContext, useEffect, useState} from "react";
 import {UserTokenContext} from "../contexts/userContext";
 import {createAndroidApp, getAndroidApp, updateAndroidApp} from "../services/androidApps";
@@ -13,7 +13,6 @@ const appTemplate = {
   description: 'Describe your app...',
   instructions: 'Instructions for reviewers...',
   repoLink: '',
-  owner: '',
   dataSafety: {
     appActivity: {
       shared: false,
@@ -45,7 +44,7 @@ export const CreateApp = () => {
   const navigate = useNavigate();
   const {currentUser} = useContext(UserTokenContext);
   const [user, setUser] = useState<UserToken | null>(null);
-  const [app, setApp] = useState<CreateAndroidAppRequest>(appTemplate);
+  const [app, setApp] = useState<AndroidApp>(appTemplate);
 
   // a flag to differentiate between creating a new app and updating an existing one
   const updating = appId !== undefined;
@@ -59,12 +58,17 @@ export const CreateApp = () => {
     };
     getApp();
     const user = currentUser();
+    const isOwner = user && user.user.id === app?.owner?.id;
+    
+    console.log('here', isOwner, updating);
     if (!user) {
       navigate({pathname: '/login'});
+    } else if (updating && !isOwner) {
+      navigate({pathname: `/app/${appId}`});
     } else {
       setUser(user);
     }
-  }, [appId, currentUser, navigate]);
+  }, [appId, currentUser, navigate, updating, app]);
 
   const updateApp = (property: string) => {
     return (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

@@ -34,8 +34,12 @@ export const getAndroidApp = async (id: string): Promise<AndroidApp> => {
       },
     });
     const data = await response.json();
-    console.log(data);
-    return objectToAndroidApp(data.data);
+    console.log('app data', data);
+    if (data.success)
+      return objectToAndroidApp(data.data);
+    else {
+      throw new Error(data.statusText);
+    }
   } else {
     throw new Error('User not logged in');
   }
@@ -110,6 +114,7 @@ export const uploadAPK = async (id: string, apkFile: File): Promise<UploadAPKRes
       body: formData,
     });
     const data = await response.json();
+    console.log(data);
     return data.data as UploadAPKResponse;
   } else {
     throw new Error('User not logged in');

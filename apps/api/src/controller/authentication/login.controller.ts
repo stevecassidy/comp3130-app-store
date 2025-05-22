@@ -86,7 +86,10 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 		return res.status(200).json(
 			SingleApiResponse({
 				success: true,
-				data: { user, token: userAccessToken.accessToken },
+				data: { 
+					user: {email: user.email, name: user.name, id: user._id}, 
+					token: userAccessToken.accessToken 
+				},
 				statusCode: 200
 			})
 		);

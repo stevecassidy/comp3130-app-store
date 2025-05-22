@@ -11,20 +11,25 @@ import PersonIcon from '@mui/icons-material/Person';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SourceIcon from '@mui/icons-material/Source';
 import EditIcon from '@mui/icons-material/Edit';
+import {getCurrentUser} from "../services/users";
 
 export const AppView = () => {
   const appId = useParams().appId;
   const [app, setApp] = useState<AndroidApp>();
   const md = markdown();
 
-  useEffect(() => {
-    const fetchApp = async () => {
+  const user = getCurrentUser()?.user;
+  const isOwner = user && user.id === app?.owner.id;
+
+  const updateApp = async (appId: string | undefined) => {
       if (appId) {
         const app = await getAndroidApp(appId);
         setApp(app);
       }
     };
-    fetchApp();
+
+  useEffect(() => {
+    updateApp(appId);
   }, [appId])
 
   if (!app) {
@@ -36,9 +41,8 @@ export const AppView = () => {
 
   return (
     <div>
-      <h1>{app.name} <Link to={`/edit/${appId}`}><EditIcon /></Link></h1>
-
-      
+      <h1>{app.name} 
+        {isOwner && <Link to={`/edit/${appId}`}><EditIcon /></Link>}</h1>
 
       {iconURL && <img src={`${API_BASE_URL}${iconURL}`} width="100" height="100" alt="App Icon"/>}
 
@@ -48,7 +52,7 @@ export const AppView = () => {
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
-              <ListItemText primary={"Owner: " + app.owner} />
+              <ListItemText primary={"Owner: " + app.owner.name} />
             </ListItemButton>
           </ListItem>
 
@@ -70,21 +74,12 @@ export const AppView = () => {
             </ListItemButton>
           </ListItem>
           </List>
+      {appId && <UploadAPK appId={appId} apkFile={app.apkFile} updateApp={updateApp} isOwner={isOwner} />}
 
       <h2>Description</h2>
       <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />
 
-      {app.apkFiles && app.apkFiles.map((apk) => (
-        <div key={apk.url}>
-          <a href={`${API_BASE_URL}${apk.url}`}>{apk.url}</a>
-        </div>
-      ))}
-
-      {screenshotURLs && screenshotURLs.map((url: string, idx: number) => (
-        <div key={`screenshot-${idx}`}>
-          <img src={`${API_BASE_URL}${url}`} width="200"/>
-        </div>
-      ))}
+      {appId && <UploadImage images={screenshotURLs} appId={appId} role="screenshot" updateApp={updateApp} isOwner={isOwner} />}
 
       <h2>Reviewer Information</h2>
 
@@ -125,16 +120,6 @@ export const AppView = () => {
           property="deviceInformation"
           label="Data about the device the user is using."
           />
-
-
-
-      {appId && <UploadAPK appId={appId} />}
-
-      {appId && <UploadImage appId={appId} role="icon" />}
-
-      {appId && <UploadImage appId={appId} role="screenshot" />}
-
-
     </div>
   );
 }

@@ -11,17 +11,10 @@ export interface IAndroidApp extends IBase {
     slug: string;
     description: string;
     instructions: string;
-    owner: string; // email address of User
+    owner: mongoose.Types.ObjectId; // id of the user who created the app
     dataSafety?: AndroidAppDataSafety;
-    apkFiles?: mongoose.Types.ObjectId[];
+    apkFile?: string;
     repoLink?: string;
-}
-
-// An APK file associated with the app, there may be more than one version
-export interface IAndroidAppApk extends IBase {
-    _id: mongoose.Types.ObjectId;
-    appId: mongoose.Types.ObjectId;
-    filename: string;
 }
 
 // Request
@@ -43,3 +36,10 @@ export interface IAndroidAppImage extends IBase {
 }
 
 
+export interface IAppReview extends IBase {
+    _id: mongoose.Types.ObjectId;
+    appId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId;
+    rating: number;
+    comment: string;
+}

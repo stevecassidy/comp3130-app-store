@@ -54,8 +54,6 @@ const AccessToken = async (req: Request, res: Response): Promise<Response> => {
                 expiresIn: "7d"
             });
 
-            console.log("generated", token);
-
             return res.status(200).json(
                 SingleApiResponse({
                     success: true,

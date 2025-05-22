@@ -20,7 +20,6 @@ describe('AndroidApp Endpoints', () => {
     name: 'Test App',
     description: 'Test Description',
     instructions: 'Test Instructions',
-    owner: testUser.email,
     dataSafety: {
         appActivity: {
           shared: false,
@@ -74,6 +73,7 @@ describe('AndroidApp Endpoints', () => {
       .expect(200)
       .expect((res) => {
         expect(res.body.data.name).toBe(testApp.name);
+        expect(res.body.data.owner.email).toBe(testUser.email);
       });
   });
 
@@ -193,10 +193,7 @@ describe('AndroidApp Endpoints', () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-      expect(appResponse.body.data.apkFiles.length).toBe(1);
-      expect(appResponse.body.data.apkFiles[0].url).toBe(response.body.data.url);
-
-
+      expect(appResponse.body.data.apkFile).toBe(response.body.data.url);
 
       // now get the APK file back
       const apkResponse = await request(App)
@@ -237,7 +234,21 @@ describe('AndroidApp Endpoints', () => {
       expect(apkResponse.body).toBeDefined();
     });
 
+    test('POST /api/app/:id/review - create review with auth', async () => {
+      const review = {
+        rating: 4,
+        comment: 'Great app!',
+      };
 
+      const response = await request(App)
+        .post(`/api/app/${createdAppId}/review`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(review);
+
+      expect(response.status).toBe(201);
+      expect(response.body.data.rating).toBe(review.rating);
+      expect(response.body.data.comment).toBe(review.comment);      
+    });
 
 });
 

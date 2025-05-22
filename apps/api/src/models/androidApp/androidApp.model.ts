@@ -20,7 +20,8 @@ const androidAppSchema = new Schema<IAndroidApp>({
         required: true,
     },
     owner: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     dataSafety: {
@@ -38,6 +39,10 @@ const androidAppSchema = new Schema<IAndroidApp>({
     repoLink: {
         type: String,
         required: false,
+    },
+    apkFile: {
+        type: String,
+        required: false,
     }
   }, {
     timestamps: true,
@@ -51,12 +56,6 @@ const androidAppSchema = new Schema<IAndroidApp>({
         versionKey: false // This removes __v
       }
     })
-
-androidAppSchema.virtual('apkFiles', {
-    ref: 'AndroidAppApk',
-    localField: '_id',
-    foreignField: 'appId',
-});
 
 androidAppSchema.virtual('images', {
     ref: 'AndroidAppImage',
