@@ -9,6 +9,7 @@ import {NavBar} from './components/NavBar';
 import {UserContextProvider} from './contexts/UserContextProvider';
 import {CreateApp} from './components/CreateApp';
 import {AppView} from './components/AppView';
+import {HelpPage} from './pages/Help';
 
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
                 <Route path="/app/:appId" element={<AppView />} />
                 <Route path="/login" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/help" element={<HelpPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Box>

@@ -77,6 +77,8 @@ export const UploadAPK = ({appId, apkFile, updateApp, isOwner}:
                 <Button type="submit" variant="contained">Upload {file.name}</Button>
               </FormControl>
             }
+
+          <p>Upload an APK file build of your app so that others can test it.</p>
             </>)
           }
       </Box>

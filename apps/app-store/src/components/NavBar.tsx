@@ -3,6 +3,7 @@ import {useContext} from "react";
 import {UserTokenContext} from "../contexts/userContext";
 import {useNavigate} from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
+import HelpIcon from '@mui/icons-material/Help';
 
 export const NavBar = () => {
 
@@ -23,15 +24,18 @@ export const NavBar = () => {
           COMP3130 App Store
         </Typography>
         <IconButton color="inherit" href="/"><HomeIcon/></IconButton>
+        <IconButton color="inherit" href="/help"><HelpIcon /></IconButton>
+
         {user ? (
           <>
-          <Typography variant="body1" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="body1" component="div">
             Welcome {user.user.name}
           </Typography>
           <Button onClick={doLogout} color="inherit">Logout</Button>
           </>
         ) :
         (<Button href="/login" color="inherit">Login</Button>)}
+        
       </Toolbar>
     </AppBar>
   );
