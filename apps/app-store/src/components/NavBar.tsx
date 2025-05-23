@@ -23,8 +23,8 @@ export const NavBar = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           COMP3130 App Store
         </Typography>
-        <IconButton color="inherit" href="/"><HomeIcon/></IconButton>
-        <IconButton color="inherit" href="/help"><HelpIcon /></IconButton>
+        <IconButton color="inherit" onClick={() => navigate("/")}><HomeIcon/></IconButton>
+        <IconButton color="inherit" onClick={() => navigate("/help")}><HelpIcon /></IconButton>
 
         {user ? (
           <>
@@ -34,7 +34,7 @@ export const NavBar = () => {
           <Button onClick={doLogout} color="inherit">Logout</Button>
           </>
         ) :
-        (<Button href="/login" color="inherit">Login</Button>)}
+        (<Button onClick={() => navigate("/login")} color="inherit">Login</Button>)}
         
       </Toolbar>
     </AppBar>
