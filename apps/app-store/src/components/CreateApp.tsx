@@ -1,9 +1,9 @@
-import {AndroidApp, AndroidAppDataSafety, CreateAndroidAppRequest, DataSafetyEntry, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AndroidApp, AndroidAppDataSafety, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import {UserTokenContext} from "../contexts/userContext";
 import {createAndroidApp, getAndroidApp, updateAndroidApp} from "../services/androidApps";
-import {Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
-import {useNavigate, useParams} from "react-router-dom";
 import {UserToken} from "../services/users";
 import {MarkdownEditor} from "./MarkdownEditor";
 
@@ -14,10 +14,6 @@ const appTemplate = {
   instructions: '',
   repoLink: '',
   dataSafety: {
-    appActivity: {
-      shared: false,
-      information: '',
-    },
     personalInformation: {
       shared: false,
       information: '',

@@ -54,7 +54,7 @@ export const AppView = () => {
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
-              <ListItemText primary={"Owner: " + app.owner.name} />
+              <ListItemText primary={"Owner: " + app.owner?.name} />
             </ListItemButton>
           </ListItem>
 
@@ -85,7 +85,7 @@ export const AppView = () => {
             </ListItemButton>
           </ListItem>
           </List>
-      {appId && <UploadAPK appId={appId} apkFile={app.apkFile} slug={app.slug} updateApp={updateApp} isOwner={isOwner} />}
+      {appId && <UploadAPK appId={appId} apkFile={app.apkFile} updateApp={updateApp} isOwner={isOwner} />}
 
       <h2>Description</h2>
       <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />
@@ -202,7 +202,7 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
 
       <FormControl>
         <FormLabel>Rating</FormLabel>
-         <Rating name="rating" value={rating} onChange={(event, newValue) => {
+         <Rating name="rating" value={rating} onChange={(_event, newValue) => {
           setRating(newValue);
         }} />
       </FormControl>

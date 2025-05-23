@@ -17,6 +17,7 @@ export interface AndroidAppReview extends APIBase {
 export interface AndroidApp extends APIBase {
   id?: string;
   name: string;
+  slug?: string;
   description: string;
   owner?: UserSummaryDetails;
   instructions: string;
@@ -32,11 +33,8 @@ export interface DataSafetyEntry {
   information: string;
 }
 export interface AndroidAppDataSafety {
-  appActivity: DataSafetyEntry;
   personalInformation: DataSafetyEntry;
   location: DataSafetyEntry;
-  appInfoPerformance: DataSafetyEntry;
-  deviceInformation: DataSafetyEntry;
   camera: DataSafetyEntry;
   microphone: DataSafetyEntry;
 }
