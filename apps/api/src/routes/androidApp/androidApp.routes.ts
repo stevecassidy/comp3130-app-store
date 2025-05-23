@@ -23,7 +23,7 @@ const AndroidAppRouter = Router()
 AndroidAppRouter.use(AuthMiddleware)
 
 AndroidAppRouter.get('/:id', GetAndroidApp)
-AndroidAppRouter.get('/:searchKey/:pageNumber', GetAndroidApps)
+AndroidAppRouter.get('/', GetAndroidApps)
 AndroidAppRouter.post('/', CreateAndroidApp)
 AndroidAppRouter.put('/:id', UpdateAndroidApp)
 AndroidAppRouter.delete('/:id', DeleteAndroidApp)

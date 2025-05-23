@@ -60,6 +60,7 @@ export const UploadImage = ({appId, images, role, updateApp, isOwner}:
               gap: 2,
             }}
           >
+            <p>The first screenshot you upload will be used as the app image on the main page.</p>
             {!file && <FormControl>
             <Button variant="contained" component="label">
             Add {niceRoleName} File

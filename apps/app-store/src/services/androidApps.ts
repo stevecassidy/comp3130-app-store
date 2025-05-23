@@ -4,7 +4,7 @@ import {API_BASE_URL} from '../config';
 import {getCurrentUser} from './users';
 
 export const getAndroidApps = async (): Promise<AndroidApp[]> => {
-  const url = `${API_BASE_URL}/api/app/_/1`;
+  const url = `${API_BASE_URL}/api/app/`;
   const user = getCurrentUser();
   if (user) {
     const response = await fetch(url, {
@@ -34,7 +34,6 @@ export const getAndroidApp = async (id: string): Promise<AndroidApp> => {
       },
     });
     const data = await response.json();
-    console.log('app data', data);
     if (data.success)
       return objectToAndroidApp(data.data);
     else {

@@ -7,10 +7,11 @@ import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync, unlinkSync} from "fs";
 import {join} from "path";
 import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
-import {AddReviewForAndroidAppRequest, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AddReviewForAndroidAppRequest, AndroidApp, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
 import {generateAppSlug} from "../../helpers/appslug.helper";
 import {AppReviewModel} from "../../models/androidApp/review.model";
+import mongoose from "mongoose";
 
 //#endregion
 
@@ -52,35 +53,36 @@ const validateID = async (slug: string): Promise<boolean> => {
  */
 export const GetAndroidApps = async (req: Request, res: Response): Promise<Response> => {
 
-    // Extracting request
-    const searchKey = req.params.searchKey as string;
-    const pageNumber = Number(req.params.pageNumber as string);
+    const { id: currentUserId } = req as CustomRequest
 
     try {
-
-        let androidApps: IAndroidApp[] = []
         let totalAndroidAppCount = 0
         const androidAppsLimit = 10;
+        let myApp: Omit<Omit<IAndroidApp, never>, never> | null = null;
 
-        // get all Apps 
-        if (searchKey === '_') {
-            // Fetch AndroidApps
-            androidApps = await AndroidAppModel.find<IAndroidApp>({}); //.skip(pageNumber === 1 ? 0 : (pageNumber - 1) * 10).limit(androidAppsLimit);
-            // Get the total count (for pagination)
-            totalAndroidAppCount = await AndroidAppModel.countDocuments({});
-        } else {
-            // Create expression object
-            const searchQuery = {
-                name: { $regex: `.*${searchKey}.*`, $options: 'i' },
-            };
-
-            // Fetch AndroidApps
-            androidApps = await AndroidAppModel.find<IAndroidApp>(searchQuery).skip(pageNumber === 1 ? 0 : pageNumber * 10).limit(androidAppsLimit);
-
-            // Get the total count (for pagination)
-            totalAndroidAppCount = await AndroidAppModel.countDocuments(searchQuery);
+        if (currentUserId) {
+            // get this user's app if there is one
+            const ownerID = new mongoose.Types.ObjectId(currentUserId);
+            myApp = await AndroidAppModel.findOne({owner: ownerID})
+                .populate('owner')
+                .populate('images');
         }
 
+        // Fetch AndroidApps
+        let androidApps = await AndroidAppModel.find<IAndroidApp>({})
+            .populate('owner')
+            .populate('images')
+            .limit(androidAppsLimit);
+        // Get the total count (for pagination)
+        totalAndroidAppCount = await AndroidAppModel.countDocuments({});
+
+        // if we have myApp then push it onto the start of the list
+        if (myApp) {
+            // remove myApp from the list
+            androidApps = androidApps.filter(app => app._id.toString() !== myApp?._id.toString());
+            // and add it at the start
+            androidApps.unshift(myApp);
+        }
 
         return res.status(200).json(
             ApiResponse({

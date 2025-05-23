@@ -77,33 +77,13 @@ describe('AndroidApp Endpoints', () => {
       });
   });
 
-  test('GET /api/app/:searchType/:searchKey/:pageNumber - get apps with auth', async () => {
+  test('GET /api/app/ - get apps with auth', async () => {
     await request(App)
-      .get(`/api/app/_/1`)
+      .get(`/api/app/`)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200)
       .expect((res) => {
         expect(res.body.data.length).toBe(1);
-      });
-  });
-
-  test('GET /api/app/:searchType/:searchKey/:pageNumber - get apps with search term', async () => {
-    await request(App)
-      .get(`/api/app/Test/1`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data.length).toBe(1);
-      });
-  });
-
-  test('GET /api/app/:searchType/:searchKey/:pageNumber - get apps with search term not matching', async () => {
-    await request(App)
-      .get(`/api/app/Egg/1`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data.length).toBe(0);
       });
   });
 

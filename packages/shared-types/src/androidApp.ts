@@ -29,6 +29,8 @@ export interface AndroidAppDataSafety {
   location: DataSafetyEntry;
   appInfoPerformance: DataSafetyEntry;
   deviceInformation: DataSafetyEntry;
+  camera: DataSafetyEntry;
+  microphone: DataSafetyEntry;
 }
 
 

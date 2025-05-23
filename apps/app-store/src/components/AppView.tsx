@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {getAndroidApp} from "../services/androidApps";
 import {Link, useParams} from "react-router-dom";
 import {AndroidApp, AndroidAppDataSafety, AppReview} from "@app-store/shared-types";
@@ -20,7 +20,7 @@ export const AppView = () => {
   const md = markdown();
 
   const user = getCurrentUser()?.user;
-  const isOwner = user && user.id === app?.owner.id;
+  const isOwner = user ? user.id === app?.owner?.id : false;
 
   const updateApp = async (appId: string | undefined) => {
       if (appId) {
@@ -86,17 +86,11 @@ export const AppView = () => {
 
       {app.instructions}
 
-      <h2>Data Safety</h2>
+      <h2>App Capabilities and Data Collection</h2>
 
       <p>Here's more information that the developer has provided about
-        the kinds of data that this app may collect and share, and
-        security practices that the app may follow.</p>
-
-      <DataSafety
-          app={app}
-          property="appActivity"
-          label="Data about how often users use the app and what they are doing."
-          />
+        the kinds of data that this app may collect and share, and device capabilities
+        that the app will use.</p>
 
         <DataSafety
           app={app}
@@ -104,23 +98,23 @@ export const AppView = () => {
           label="Personal information about users."
           />
 
+       <DataSafety
+          app={app}
+          property="camera"
+          label="App uses the device camera."
+          />
+        <DataSafety
+          app={app}
+          property="microphone"
+          label="App uses the device microphone."
+          />
         <DataSafety
           app={app}
           property="location"
           label="Data about user's location while using the app."
           />
 
-        <DataSafety
-          app={app}
-          property="appInfoPerformance"
-          label="Data about how the app is performing or error reports."
-          />
 
-        <DataSafety
-          app={app}
-          property="deviceInformation"
-          label="Data about the device the user is using."
-          />
 
     <ReviewForm app={app} isOwner={isOwner} />
 
@@ -143,7 +137,7 @@ const DataSafety = ({app, property, label}: DSProps) => {
     else return <></>;
 }
 
-interface ReviewProps {app: AndroidAp, isOwner: boolean};
+interface ReviewProps {app: AndroidApp, isOwner: boolean};
 
 export const ReviewForm = ({app, isOwner} : ReviewProps) => {
 

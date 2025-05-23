@@ -10,8 +10,8 @@ import {MarkdownEditor} from "./MarkdownEditor";
 
 const appTemplate = {
   name: '',
-  description: 'Describe your app...',
-  instructions: 'Instructions for reviewers...',
+  description: '',
+  instructions: '',
   repoLink: '',
   dataSafety: {
     appActivity: {
@@ -26,11 +26,11 @@ const appTemplate = {
       shared: false,
       information: '',
     },
-    appInfoPerformance: {
+    camera: {
       shared: false,
       information: '',
     },
-    deviceInformation: {
+    microphone: {
       shared: false,
       information: '',
     },
@@ -54,21 +54,22 @@ export const CreateApp = () => {
       if (appId) {
         const app = await getAndroidApp(appId);
         setApp(app);
+
+        const user = currentUser();
+        const isOwner = user && user.user.id === app?.owner?.id;
+        if (!user) {
+          navigate({pathname: '/login'});
+        } else if (updating && !isOwner) {
+          navigate({pathname: `/app/${appId}`});
+        } else {
+          setUser(user);
+        }
       }
     };
+    console.log('calling getApp()');
     getApp();
-    const user = currentUser();
-    const isOwner = user && user.user.id === app?.owner?.id;
     
-    console.log('here', isOwner, updating);
-    if (!user) {
-      navigate({pathname: '/login'});
-    } else if (updating && !isOwner) {
-      navigate({pathname: `/app/${appId}`});
-    } else {
-      setUser(user);
-    }
-  }, [appId, currentUser, navigate, updating, app]);
+  }, [appId, updating, currentUser, navigate]);
 
   const updateApp = (property: string) => {
     return (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -154,17 +155,10 @@ export const CreateApp = () => {
 
         <h2>Data Safety</h2>
 
-        <p>You need to provide information about what, if any, data your app 
-          collects from your users and how that data is used. Check all 
-          questions below that apply to your app and provide explanatory text
-          for your users in each case.</p>
-
-        <DataSafetyFormEntry
-          app={app}
-          setApp={setApp}
-          property="appActivity"
-          label="Data about how often users use the app and what they are doing."
-          />
+        <p>You need to provide information about device capabilities used and data 
+          collected by your app and why you need these.  This allows users to 
+          understand why you are asking for permission to use these capabilities.
+        </p>
 
         <DataSafetyFormEntry
           app={app}
@@ -176,22 +170,22 @@ export const CreateApp = () => {
         <DataSafetyFormEntry
           app={app}
           setApp={setApp}
+          property="camera"
+          label="App uses the device camera."
+          />
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
+          property="microphone"
+          label="App uses the device microphone."
+          />
+
+        <DataSafetyFormEntry
+          app={app}
+          setApp={setApp}
           property="location"
           label="Data about user's location while using the app."
-          />
-
-        <DataSafetyFormEntry
-          app={app}
-          setApp={setApp}
-          property="appInfoPerformance"
-          label="Data about how the app is performing or error reports."
-          />
-
-        <DataSafetyFormEntry
-          app={app}
-          setApp={setApp}
-          property="deviceInformation"
-          label="Data about the device the user is using."
           />
 
         <p>You will be able to add screenshots etc. once the app has been created.</p>
@@ -207,8 +201,8 @@ export const CreateApp = () => {
 interface DataSafetyEntryProps {
   property: keyof AndroidAppDataSafety;
   label: string;
-  app: CreateAndroidAppRequest;
-  setApp: (app: CreateAndroidAppRequest) => void;
+  app: AndroidApp;
+  setApp: (app: AndroidApp) => void;
 }
 
 
@@ -216,6 +210,7 @@ const DataSafetyFormEntry = (props: DataSafetyEntryProps) => {
 
   const {app, setApp, property, label} = props;
 
+  console.log('DataSafetyFormEntry', property, label);
   // event handler for checkbox 
   const updateDataSafetyShared = () => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,16 +254,16 @@ const DataSafetyFormEntry = (props: DataSafetyEntryProps) => {
           label={label}
           control={
           <Checkbox name="dataSafetyAppActivity"
-            checked={app.dataSafety[property].shared} 
+            checked={app.dataSafety[property]?.shared || false} 
             onChange={updateDataSafetyShared()} />
           }
           />
 
-            {app.dataSafety[property].shared &&
+            {app.dataSafety[property]?.shared &&
               <TextField
                 fullWidth
                 name="dataSafetyAppActivityInfo"
-                value={app.dataSafety[property].information} 
+                value={app.dataSafety[property]?.information || ''} 
                 onChange={updateDataSafetyInfo()} 
                 placeholder="Provide an explanation about what data is collected and why."/>
             }
