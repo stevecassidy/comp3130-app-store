@@ -23,6 +23,7 @@
 		"mongoose": "^7.0.0",
 		"multer": "^1.4.5-lts.1",
 		"nodemailer": "^6.9.1",
+		"pm2": "^6.0.6",
 		"socket.io": "^4.6.1",
 		"supertest": "^6.3.4",
 		"ts-node": "^10.9.2"
@@ -34,7 +35,10 @@
 		"test": "cross-env NODE_ENV=test jest",
 		"test-watch": "cross-env NODE_ENV=test jest --watch",
 		"lint": "npx eslint .",
-		"create-accounts": "ts-node ./src/scripts/create-accounts.ts"
+		"create-accounts": "ts-node ./src/scripts/create-accounts.ts",
+		"prestart-prod": "npm run build",
+		"start-prod": "pm2 start ecosystem.config.js",
+    "stop-prod": "pm2 stop all"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.0",

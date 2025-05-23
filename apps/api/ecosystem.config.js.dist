@@ -1,0 +1,30 @@
+module.exports = {
+  apps : [{
+    name: 'app-store-api',
+    script: 'src/index.js',
+    watch: '.',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 8109,
+      SESSION_DB_SECRET: 'reallysecretsecret',
+      TOKEN_KEY:'abcdEfGhI',
+      ACCESS_TOKEN_KEY:'abcdEfGhI',
+      MONGO_DB:'mongodb+srv://...',
+      MONGO_DB_SCHEMA:'prod'
+    }
+  },
+],
+
+  deploy : {
+    production : {
+      user : 'SSH_USERNAME',
+      host : 'SSH_HOSTMACHINE',
+      ref  : 'origin/master',
+      repo : 'GIT_REPOSITORY',
+      path : 'DESTINATION_PATH',
+      'pre-deploy-local': '',
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
+      'pre-setup': ''
+    }
+  }
+};

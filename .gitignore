@@ -6,3 +6,4 @@ apps/*/build
 packages/shared-types/dist
 apps/api/.env
 apps/api/assets
+apps/api/ecosystem.config.js
