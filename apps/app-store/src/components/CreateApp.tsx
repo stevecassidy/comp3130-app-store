@@ -47,7 +47,7 @@ export const CreateApp = () => {
 
   useEffect(() => {
     const getApp = async () => {
-      if (appId) {
+      if (updating) {
         const app = await getAndroidApp(appId);
         setApp(app);
 
@@ -55,11 +55,13 @@ export const CreateApp = () => {
         const isOwner = user && user.user.id === app?.owner?.id;
         if (!user) {
           navigate({pathname: '/login'});
-        } else if (updating && !isOwner) {
+        } else if (!isOwner) {
           navigate({pathname: `/app/${appId}`});
         } else {
           setUser(user);
         }
+      } else {
+        setUser(currentUser());
       }
     };
     console.log('calling getApp()');
@@ -81,6 +83,7 @@ export const CreateApp = () => {
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    console.log('handleSubmit', user, updating);
     if (user) {
 
       if (updating) {
@@ -206,7 +209,6 @@ const DataSafetyFormEntry = (props: DataSafetyEntryProps) => {
 
   const {app, setApp, property, label} = props;
 
-  console.log('DataSafetyFormEntry', property, label);
   // event handler for checkbox 
   const updateDataSafetyShared = () => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
