@@ -56,7 +56,6 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
     const { id: currentUserId } = req as CustomRequest
 
     try {
-        let totalAndroidAppCount = 0
         const androidAppsLimit = 10;
         let myApp: Omit<Omit<IAndroidApp, never>, never> | null = null;
 
@@ -67,13 +66,6 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
                 .populate('owner')
                 .populate('images');
         }
-
-        // Fetch AndroidApps
-        // let androidApps = await AndroidAppModel.find<IAndroidApp>({})
-        //     .populate('owner')
-        //     .populate('images');
-        // // Get the total count (for pagination)
-        // totalAndroidAppCount = await AndroidAppModel.countDocuments({});
 
         // Fetch random AndroidApps using aggregation with $sample
         let androidApps = await AndroidAppModel.aggregate([
@@ -96,8 +88,6 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
                 as: 'images'
             }}
         ]);
-
-        console.log('androidApps', androidApps);
         
         // if we have myApp then push it onto the start of the list
         if (myApp) {
@@ -111,7 +101,7 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
             ApiResponse({
                 success: true,
                 data: androidApps,
-                count: totalAndroidAppCount,
+                count: androidApps.length,
                 statusCode: 200
             })
         );
@@ -380,7 +370,7 @@ export const AddAPKForAndroidApp = async (req: Request, res: Response): Promise<
             }
         }
         // move to the final location
-        const apkFilename = `${apk.filename}.apk`;
+        const apkFilename = `${app.slug}.apk`;
         const apkPath = join(APK_DIR, apkFilename);
 
         mkdirSync(APK_DIR, { recursive: true });

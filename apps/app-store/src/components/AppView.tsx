@@ -13,6 +13,7 @@ import {getCurrentUser} from "../services/users";
 import {MarkdownEditor} from "./MarkdownEditor";
 import {UploadAPK} from "./UploadAPK";
 import {UploadImage} from "./UploadImage";
+import BadgeIcon from '@mui/icons-material/Badge';
 
 export const AppView = () => {
   const appId = useParams().appId;
@@ -58,6 +59,15 @@ export const AppView = () => {
           </ListItem>
 
           <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <BadgeIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Slug: " + app.slug} />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
            <ListItemButton>
               <ListItemIcon>
                 <CalendarTodayIcon />
@@ -75,7 +85,7 @@ export const AppView = () => {
             </ListItemButton>
           </ListItem>
           </List>
-      {appId && <UploadAPK appId={appId} apkFile={app.apkFile} updateApp={updateApp} isOwner={isOwner} />}
+      {appId && <UploadAPK appId={appId} apkFile={app.apkFile} slug={app.slug} updateApp={updateApp} isOwner={isOwner} />}
 
       <h2>Description</h2>
       <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />

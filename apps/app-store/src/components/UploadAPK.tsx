@@ -5,12 +5,13 @@ import {AndroidAppApk} from "@app-store/shared-types";
 import {API_BASE_URL} from "../config";
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 
-export const UploadAPK = ({appId, apkFile, updateApp, isOwner}:
+export const UploadAPK = ({appId, apkFile, updateApp, isOwner, slug}:
   {
     appId: string, 
     apkFile: AndroidAppApk | undefined, 
     updateApp: (appId: string | undefined) => void,
     isOwner: boolean,
+    slug: string,
   }) => {
 
   const [file, setFile] = useState<File | null>(null);
@@ -50,7 +51,7 @@ export const UploadAPK = ({appId, apkFile, updateApp, isOwner}:
                 aria-label='APK Download'
                 size="large"
                 href={`${API_BASE_URL}${apkFile}`}
-                download="app.apk"
+                download={`${slug}.apk`}
                 startIcon={<PhoneAndroidIcon />}
                 >
                 Download APK  
