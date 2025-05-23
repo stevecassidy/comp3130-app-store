@@ -13,11 +13,7 @@ export const getAndroidApps = async (): Promise<AndroidApp[]> => {
       },
     });
     const data = await response.json();
-    if (data.count > 0) {
-      return data.data.map(objectToAndroidApp);
-    } else {
-      return [];
-    }
+    return data.data.map(objectToAndroidApp);
   } else {
     throw new Error('User not logged in');
   }

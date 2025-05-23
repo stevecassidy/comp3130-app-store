@@ -69,13 +69,36 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
         }
 
         // Fetch AndroidApps
-        let androidApps = await AndroidAppModel.find<IAndroidApp>({})
-            .populate('owner')
-            .populate('images')
-            .limit(androidAppsLimit);
-        // Get the total count (for pagination)
-        totalAndroidAppCount = await AndroidAppModel.countDocuments({});
+        // let androidApps = await AndroidAppModel.find<IAndroidApp>({})
+        //     .populate('owner')
+        //     .populate('images');
+        // // Get the total count (for pagination)
+        // totalAndroidAppCount = await AndroidAppModel.countDocuments({});
 
+        // Fetch random AndroidApps using aggregation with $sample
+        let androidApps = await AndroidAppModel.aggregate([
+            { $match: {} },  // You can add conditions here if needed
+            { $sample: { size: androidAppsLimit } },
+            // Add a lookup stage to populate references
+            { $lookup: {
+                from: 'users',  // The collection name for the User model
+                localField: 'owner',
+                foreignField: '_id',
+                as: 'owner'
+            }},
+            // Unwind the owner array to get a single object
+            { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
+            // Lookup for images
+            { $lookup: {
+                from: 'androidappimages',  // The collection name for the AndroidAppImage model
+                localField: '_id',
+                foreignField: 'appId',
+                as: 'images'
+            }}
+        ]);
+
+        console.log('androidApps', androidApps);
+        
         // if we have myApp then push it onto the start of the list
         if (myApp) {
             // remove myApp from the list

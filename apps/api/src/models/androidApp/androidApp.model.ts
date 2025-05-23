@@ -64,7 +64,7 @@ androidAppSchema.virtual('images', {
 });
 
 androidAppSchema.virtual('reviews', {
-    ref: 'AppReview',
+    ref: 'AndroidAppReview',
     localField: '_id',
     foreignField: 'appId',
 });

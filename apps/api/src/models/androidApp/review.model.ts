@@ -27,4 +27,4 @@ const appReviewSchema = new Schema<IAppReview>({
 });
 
 
-export const AppReviewModel = model<IAppReview>("AppReview", appReviewSchema)
+export const AppReviewModel = model<IAppReview>("AndroidAppReview", appReviewSchema)

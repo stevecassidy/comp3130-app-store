@@ -7,6 +7,13 @@ export interface UserSummaryDetails {
   email: string;
 }
 
+export interface AndroidAppReview extends APIBase {
+  appID: string;
+  userID: string;
+  rating: number;
+  comment: string;
+}
+
 export interface AndroidApp extends APIBase {
   id?: string;
   name: string;
@@ -17,6 +24,7 @@ export interface AndroidApp extends APIBase {
   images?: AndroidAppImage[];
   dataSafety: AndroidAppDataSafety;
   repoLink?: string;
+  reviews?: AndroidAppReview[];
 }
 
 export interface DataSafetyEntry {
@@ -92,11 +100,3 @@ export const objectToAndroidApp = (data: {dateUpdated: string, dateCreated: stri
     dateCreated: new Date(data.dateCreated),
   } as AndroidApp;
 };
-
-export interface AppReview extends APIBase {
-  appID: string;
-  userID: string;
-  rating: number;
-  comment: string;
-  dateCreated: Date;
-}

@@ -20,6 +20,7 @@ export const AppList = () => {
       const apps = await getAndroidApps();
       setApps(apps);
       setHasOwnApp(apps.some((app) => app.owner?.id === user?.id));
+      console.log('apps', apps);
     };
     fetchApps();
   }, [user]);

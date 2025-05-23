@@ -1,18 +1,18 @@
-import {useContext, useEffect, useState} from "react";
-import {getAndroidApp} from "../services/androidApps";
-import {Link, useParams} from "react-router-dom";
-import {AndroidApp, AndroidAppDataSafety, AppReview} from "@app-store/shared-types";
-import {UploadAPK} from "./UploadAPK";
-import {API_BASE_URL} from "../config";
-import {UploadImage} from "./UploadImage";
-import markdown from 'markdown-it';
-import {Box, Button, FormControl, FormLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Rating, TextField} from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
+import {AndroidApp, AndroidAppDataSafety, AndroidAppReview} from "@app-store/shared-types";
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import SourceIcon from '@mui/icons-material/Source';
 import EditIcon from '@mui/icons-material/Edit';
+import PersonIcon from '@mui/icons-material/Person';
+import SourceIcon from '@mui/icons-material/Source';
+import {Box, Button, FormControl, FormLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Rating} from "@mui/material";
+import markdown from 'markdown-it';
+import {useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
+import {API_BASE_URL} from "../config";
+import {getAndroidApp} from "../services/androidApps";
 import {getCurrentUser} from "../services/users";
 import {MarkdownEditor} from "./MarkdownEditor";
+import {UploadAPK} from "./UploadAPK";
+import {UploadImage} from "./UploadImage";
 
 export const AppView = () => {
   const appId = useParams().appId;
@@ -114,8 +114,6 @@ export const AppView = () => {
           label="Data about user's location while using the app."
           />
 
-
-
     <ReviewForm app={app} isOwner={isOwner} />
 
     </div>
@@ -127,7 +125,7 @@ interface DSProps {app: AndroidApp, property: keyof AndroidAppDataSafety, label:
 
 const DataSafety = ({app, property, label}: DSProps) => {
 
-  if (app?.dataSafety[property].shared)
+  if (app?.dataSafety[property]?.shared)
     return (
       <div>
         <h3>{label}</h3>
@@ -146,13 +144,12 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
   const user = getCurrentUser();
   const md = markdown();
 
-
   const handleSubmit = async () => {
     const reviewData = {
       rating: rating,
       comment: comment,
     };
-    const response = await fetch(`${API_BASE_URL}/api/app/${app.id}/review`, {
+    await fetch(`${API_BASE_URL}/api/app/${app.id}/review`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -160,8 +157,6 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
       },
       body: JSON.stringify(reviewData),
     });
-    const data = await response.json();
-    console.log(data);
   };
 
 
@@ -170,7 +165,7 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
       <div>
         <h2>Reviews of {app.name}</h2>
 
-      {app.reviews.map((review: AppReview, index: number) => (
+      {app.reviews && app.reviews.map((review: AndroidAppReview, index: number) => (
           <Paper elevation={2} key={index} sx={{ padding: 2, marginBottom: 2, backgroundColor: '#f3ecb9' }}>
             <Rating name="rating" value={review.rating} readOnly />
             
