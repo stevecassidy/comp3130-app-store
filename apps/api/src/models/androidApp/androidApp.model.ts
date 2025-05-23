@@ -63,6 +63,12 @@ androidAppSchema.virtual('images', {
     foreignField: 'appId',
 });
 
+androidAppSchema.virtual('reviews', {
+    ref: 'AppReview',
+    localField: '_id',
+    foreignField: 'appId',
+});
+
 const AndroidAppModel = model<IAndroidApp>("AndroidApp", androidAppSchema)
 
 

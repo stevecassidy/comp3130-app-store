@@ -1,17 +1,18 @@
 import {useEffect, useState} from "react";
 import {getAndroidApp} from "../services/androidApps";
 import {Link, useParams} from "react-router-dom";
-import {AndroidApp, AndroidAppDataSafety} from "@app-store/shared-types";
+import {AndroidApp, AndroidAppDataSafety, AppReview} from "@app-store/shared-types";
 import {UploadAPK} from "./UploadAPK";
 import {API_BASE_URL} from "../config";
 import {UploadImage} from "./UploadImage";
 import markdown from 'markdown-it';
-import {List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {Box, Button, FormControl, FormLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Rating, TextField} from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SourceIcon from '@mui/icons-material/Source';
 import EditIcon from '@mui/icons-material/Edit';
 import {getCurrentUser} from "../services/users";
+import {MarkdownEditor} from "./MarkdownEditor";
 
 export const AppView = () => {
   const appId = useParams().appId;
@@ -120,6 +121,9 @@ export const AppView = () => {
           property="deviceInformation"
           label="Data about the device the user is using."
           />
+
+    <ReviewForm app={app} isOwner={isOwner} />
+
     </div>
   );
 }
@@ -137,4 +141,89 @@ const DataSafety = ({app, property, label}: DSProps) => {
       </div>
     )
     else return <></>;
+}
+
+interface ReviewProps {app: AndroidAp, isOwner: boolean};
+
+export const ReviewForm = ({app, isOwner} : ReviewProps) => {
+
+  const [rating, setRating] = useState<number | null>(null);
+  const [comment, setComment] = useState<string>('');
+  const user = getCurrentUser();
+  const md = markdown();
+
+
+  const handleSubmit = async () => {
+    const reviewData = {
+      rating: rating,
+      comment: comment,
+    };
+    const response = await fetch(`${API_BASE_URL}/api/app/${app.id}/review`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user?.token}`,
+      },
+      body: JSON.stringify(reviewData),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
+
+  if (isOwner ||  !user)
+    return (
+      <div>
+        <h2>Reviews of {app.name}</h2>
+
+      {app.reviews.map((review: AppReview, index: number) => (
+          <Paper elevation={2} key={index} sx={{ padding: 2, marginBottom: 2, backgroundColor: '#f3ecb9' }}>
+            <Rating name="rating" value={review.rating} readOnly />
+            
+            <p dangerouslySetInnerHTML={{__html: md.render(review.comment)}} />
+
+          </Paper>
+        ))}
+
+      </div>
+    )
+  else 
+  return (
+
+    <Box            
+      component="form"
+      noValidate
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        gap: 2,
+      }}>
+    <h2>Add your Review</h2>
+
+      <FormControl>
+        <FormLabel>Rating</FormLabel>
+         <Rating name="rating" value={rating} onChange={(event, newValue) => {
+          setRating(newValue);
+        }} />
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Your Review</FormLabel>
+        <MarkdownEditor
+        value={comment}
+        onChange={(value) =>
+          setComment(value)
+        }
+          />
+      </FormControl>
+
+      <div>
+        <Button onClick={handleSubmit} variant="outlined">Submit Your Review</Button>
+      </div>
+    </Box>
+
+
+  )
+
 }

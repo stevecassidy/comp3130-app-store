@@ -119,7 +119,8 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
         const app = await AndroidAppModel
             .findById<IAndroidApp>(id)
             .populate('owner')
-            .populate('images');
+            .populate('images')
+            .populate('reviews');
 
         if (app) {
             // rewrite apkFile to a URL
