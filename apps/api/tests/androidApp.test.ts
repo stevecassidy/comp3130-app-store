@@ -214,6 +214,25 @@ describe('AndroidApp Endpoints', () => {
       expect(apkResponse.body).toBeDefined();
     });
 
+    test('DELETE /api/app/:id/image/:imageID - delete image with auth', async () => {
+      const imageResponse = await request(App)
+        .post(`/api/app/${createdAppId}/image`)
+        .field('role', 'icon')
+        .set('Authorization', `Bearer ${authToken}`)
+        .attach('image', 'tests/fixtures/screenshot.png');
+
+      expect(imageResponse.status).toBe(201);
+      const imageID = imageResponse.body.data.id;
+
+      // now delete it
+      const deleteResponse = await request(App)
+      .delete(`/api/app/${createdAppId}/image/${imageID}`)
+      .set('Authorization', `Bearer ${authToken}`);
+
+      expect(deleteResponse.status).toBe(200);
+
+    });
+  
     test('POST /api/app/:id/review - create review with auth', async () => {
       const review = {
         rating: 4,

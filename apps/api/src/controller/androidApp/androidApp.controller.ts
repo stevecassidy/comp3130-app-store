@@ -418,6 +418,19 @@ export const AddImageForAndroidApp = async (req: Request, res: Response): Promis
     const imageFile = req.file as Express.Multer.File;
     const role = req.body.role as string;
 
+
+    // get the app, check it's owned by this user
+    const app = await AndroidAppModel.findById(appId);
+    if (!app || app?.owner._id.toString() !== currentUserId) {
+        return res.status(404).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 404
+            })
+        );
+    }
+
     try {
         // move to the final location
         mkdirSync(IMAGE_DIR, { recursive: true });
@@ -440,6 +453,7 @@ export const AddImageForAndroidApp = async (req: Request, res: Response): Promis
                 success: true,
                 data: {
                     appId,
+                    id: newImage._id,
                     role,
                     url: `/assets/images/${imageFileName}`,
                 },
@@ -457,6 +471,73 @@ export const AddImageForAndroidApp = async (req: Request, res: Response): Promis
             })
         );
     }
+}
+
+export const DeleteImageForAndroidApp = async (req: Request, res: Response): Promise<Response> => {
+
+    // Extracting request
+    const { id: currentUserId } = req as CustomRequest
+    const appId = req.params.id as string;
+    const imageID = req.params.imageID as string;
+
+    console.log('deleting image', appId, imageID);
+
+    if (!currentUserId) {
+        return res.status(401).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 401,
+            }));
+    }
+
+    // get the app, check it's owned by this user
+    const app = await AndroidAppModel.findById(appId);
+    if (!app || app?.owner._id.toString() !== currentUserId) {
+        return res.status(404).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 404
+            })
+        );
+    }
+
+    // get the image record if it exists
+    const image = await AndroidAppImageModel.findById(imageID);
+    if (!image || image?.appId.toString() !== appId) {
+        return res.status(404).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 404
+            })
+        );
+    }
+    // delete the image
+    try {
+        console.log('deleting image', image.filename);
+        unlinkSync(join(IMAGE_DIR, image.filename));
+        await image.deleteOne();
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json(
+            SingleApiResponse({
+                success: false,
+                data: null,
+                statusCode: 500
+            })
+        )
+    }
+    // all went well    
+    return res.status(200).json(
+        SingleApiResponse({
+            success: true,
+            data: {appId},
+            statusCode: 200
+        })
+    );
+
 }
 
 

@@ -1,12 +1,15 @@
-import {Alert, Box, Button, FormControl, ImageList, ImageListItem} from "@mui/material";
+import {Alert, Box, Button, FormControl, IconButton, ImageList, ImageListItem, ImageListItemBar} from "@mui/material";
 import {useState} from "react";
-import {uploadImage} from "../services/androidApps";
+import {deleteImage, uploadImage} from "../services/androidApps";
 import {API_BASE_URL} from "../config";
+import DeleteIcon from '@mui/icons-material/Delete';
+import {AndroidAppImage} from "@app-store/shared-types";
+
 
 export const UploadImage = ({appId, images, role, updateApp, isOwner}: 
     {
       appId: string, 
-      images: string[] | undefined, 
+      images: AndroidAppImage[],
       role: string, 
       updateApp: (appId: string | undefined) => void,
       isOwner: boolean,
@@ -19,7 +22,6 @@ export const UploadImage = ({appId, images, role, updateApp, isOwner}:
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('Uploading Image', appId);
     if (file)
       uploadImage(appId, role, file).then(() => {
         updateApp(appId);
@@ -32,15 +34,34 @@ export const UploadImage = ({appId, images, role, updateApp, isOwner}:
     setFile(event.target.files?.[0] || null);
   };
 
+  const handleDeleteImage = (imageId: string) => async () => {
+    deleteImage(appId, imageId).then(() => {
+      updateApp(appId);
+    });
+  };
+
   return (
     <div>
       <h1>Upload {niceRoleName} Image</h1>
 
       {images && 
         <ImageList sx={{ width: '100%', height: 450 }} cols={5} rowHeight={164}>
-          {images.map((url: string, idx: number) => (
+          {images.map((image: AndroidAppImage, idx: number) => (
             <ImageListItem key={`screenshot-${idx}`}>
-              <img src={`${API_BASE_URL}${url}`} width="200"/>
+              <img src={`${API_BASE_URL}${image.url}`} width="200"/>
+                  <ImageListItemBar
+              position="below"
+              title={`Screenshot ${idx + 1}`}
+              actionIcon={
+                <IconButton
+                  sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                  aria-label={`Delete this image`}
+                  onClick={handleDeleteImage(image.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+              }>
+                  </ImageListItemBar>
             </ImageListItem>
           ))}
         </ImageList>

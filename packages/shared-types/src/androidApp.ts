@@ -47,6 +47,7 @@ export interface AndroidAppApk extends APIBase {
 export interface AndroidAppImage extends APIBase {
   url: string;
   role: string;
+  id: string;
 }
 
 export interface CreateAndroidAppRequest extends APIBase {
@@ -85,6 +86,9 @@ export interface UploadImageResponse {
   role: string;
 }
 
+export interface DeleteImageResponse {
+  appID: string;
+}
 
 /**
  * Parse date strings in an API response into Date objects

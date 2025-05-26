@@ -9,7 +9,8 @@ import {
   DeleteAndroidApp, 
   AddAPKForAndroidApp,
   AddImageForAndroidApp,
-  AddReviewForAndroidApp} from "../../controller/androidApp/androidApp.controller";
+  AddReviewForAndroidApp,
+  DeleteImageForAndroidApp} from "../../controller/androidApp/androidApp.controller";
 
 import multer from "multer";
 //#endregion
@@ -30,6 +31,7 @@ AndroidAppRouter.delete('/:id', DeleteAndroidApp)
 
 AndroidAppRouter.post('/:id/apk', upload.single('apk'), AddAPKForAndroidApp)
 AndroidAppRouter.post('/:id/image', upload.single('image'), AddImageForAndroidApp)
+AndroidAppRouter.delete('/:id/image/:imageID', DeleteImageForAndroidApp)
 AndroidAppRouter.post('/:id/review', AddReviewForAndroidApp);
 
 

@@ -28,11 +28,11 @@ const androidAppImageSchema = new Schema<IAndroidAppImage>({
     toJSON: {
         transform: function(doc, ret) {
           ret.url = `/assets/images/${ret.filename}`;
+          ret.id = ret._id;
           delete ret.appId;
           delete ret._id;
           delete ret.__v;
           delete ret.filename;
-          delete ret.id;
         },
         versionKey: false // This removes __v
       }

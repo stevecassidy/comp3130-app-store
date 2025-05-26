@@ -1,5 +1,5 @@
 
-import {AndroidApp, CreateAndroidAppRequest, objectToAndroidApp, UpdateAndroidAppRequest, UploadAPKResponse, UploadImageResponse} from '@app-store/shared-types';
+import {AndroidApp, CreateAndroidAppRequest, DeleteImageResponse, objectToAndroidApp, UpdateAndroidAppRequest, UploadAPKResponse, UploadImageResponse} from '@app-store/shared-types';
 import {API_BASE_URL} from '../config';
 import {getCurrentUser} from './users';
 
@@ -133,6 +133,26 @@ export const uploadImage = async (id: string, role: string, imageFile: File): Pr
     });
     const data = await response.json();
     return data.data as UploadImageResponse;
+  } else {
+    throw new Error('User not logged in');
+  }
+};
+
+
+
+export const deleteImage = async (appId: string, imageId: string): Promise<DeleteImageResponse> => {
+  const url = `${API_BASE_URL}/api/app/${appId}/image/${imageId}`;
+  const token = getCurrentUser()?.token;
+  console.log('deleting image', appId, imageId);
+  if (token) {
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    const data = await response.json();
+    return data.data as DeleteImageResponse;
   } else {
     throw new Error('User not logged in');
   }

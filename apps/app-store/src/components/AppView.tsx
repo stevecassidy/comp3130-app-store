@@ -39,7 +39,6 @@ export const AppView = () => {
   }
 
   const iconURL = app.images?.find(img => img.role === 'icon')?.url;
-  const screenshotURLs = app.images?.filter(img => img.role === 'screenshot')?.map(img => img.url);
 
   return (
     <div>
@@ -90,7 +89,7 @@ export const AppView = () => {
       <h2>Description</h2>
       <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />
 
-      {appId && <UploadImage images={screenshotURLs} appId={appId} role="screenshot" updateApp={updateApp} isOwner={isOwner} />}
+      {appId && <UploadImage images={app.images} appId={appId} role="screenshot" updateApp={updateApp} isOwner={isOwner} />}
 
       <h2>Reviewer Information</h2>
 
