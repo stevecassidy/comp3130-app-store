@@ -49,19 +49,21 @@ export const UploadImage = ({appId, images, role, updateApp, isOwner}:
           {images.map((image: AndroidAppImage, idx: number) => (
             <ImageListItem key={`screenshot-${idx}`}>
               <img src={`${API_BASE_URL}${image.url}`} width="200"/>
-                  <ImageListItemBar
-              position="below"
-              title={`Screenshot ${idx + 1}`}
-              actionIcon={
-                <IconButton
-                  sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                  aria-label={`Delete this image`}
-                  onClick={handleDeleteImage(image.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+              {isOwner && 
+              <ImageListItemBar
+                position="below"
+                title={`Screenshot ${idx + 1}`}
+                actionIcon={
+                  <IconButton
+                    sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                    aria-label={`Delete this image`}
+                    onClick={handleDeleteImage(image.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
               }>
-                  </ImageListItemBar>
+              </ImageListItemBar>
+            }
             </ImageListItem>
           ))}
         </ImageList>
