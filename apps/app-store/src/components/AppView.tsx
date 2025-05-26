@@ -89,7 +89,7 @@ export const AppView = () => {
       <h2>Description</h2>
       <p dangerouslySetInnerHTML={{__html: md.render(app.description)}} />
 
-      {appId && <UploadImage images={app.images} appId={appId} role="screenshot" updateApp={updateApp} isOwner={isOwner} />}
+      {app.images && appId && <UploadImage images={app.images} appId={appId} role="screenshot" updateApp={updateApp} isOwner={isOwner} />}
 
       <h2>Reviewer Information</h2>
 
