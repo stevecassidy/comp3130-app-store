@@ -7,7 +7,7 @@ import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync, unlinkSync} from "fs";
 import {join} from "path";
 import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
-import {AddReviewForAndroidAppRequest, AndroidApp, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AddReviewForAndroidAppRequest, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
 import {generateAppSlug} from "../../helpers/appslug.helper";
 import {AppReviewModel} from "../../models/androidApp/review.model";
@@ -67,34 +67,30 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
                 .populate('images');
         }
 
-        // Fetch random AndroidApps using aggregation with $sample
-        let androidApps = await AndroidAppModel.aggregate([
-            { $match: {} },  // You can add conditions here if needed
+
+        // Use aggregation only for random selection of IDs
+        const randomAppIds = await AndroidAppModel.aggregate([
+            { $match: {} },
             { $sample: { size: androidAppsLimit } },
-            // Add a lookup stage to populate references
-            { $lookup: {
-                from: 'users',  // The collection name for the User model
-                localField: 'owner',
-                foreignField: '_id',
-                as: 'owner'
-            }},
-            // Unwind the owner array to get a single object
-            { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
-            // Lookup for images
-            { $lookup: {
-                from: 'androidappimages',  // The collection name for the AndroidAppImage model
-                localField: '_id',
-                foreignField: 'appId',
-                as: 'images'
-            }}
+            { $project: { _id: 1 } }  // Only project the IDs
         ]);
         
+        // Extract the IDs from the result
+        const ids = randomAppIds.map(app => app._id);
+        
+        // Fetch the full documents with populate
+        let androidApps = await AndroidAppModel.find({ _id: { $in: ids } })
+            .populate('owner')
+            .populate('images');
+
+        console.log(androidApps);
+
         // if we have myApp then push it onto the start of the list
         if (myApp) {
             // remove myApp from the list
             androidApps = androidApps.filter(app => app._id.toString() !== myApp?._id.toString());
-            // and add it at the start
-            androidApps.unshift(myApp);
+            // and add it at the start (gotta love typescript!)
+            androidApps.unshift(myApp as mongoose.Document<unknown, unknown, IAndroidApp> & IAndroidApp & Required<{ _id: mongoose.ObjectId; }>);
         }
 
         return res.status(200).json(
