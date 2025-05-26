@@ -83,8 +83,6 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
             .populate('owner')
             .populate('images');
 
-        console.log(androidApps);
-
         // if we have myApp then push it onto the start of the list
         if (myApp) {
             // remove myApp from the list

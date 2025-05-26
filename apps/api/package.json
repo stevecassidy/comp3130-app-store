@@ -37,8 +37,9 @@
 		"lint": "npx eslint .",
 		"create-accounts": "ts-node ./src/scripts/create-accounts.ts",
 		"prestart-prod": "npm run build",
-		"start-prod": "pm2 start ecosystem.config.js",
-    "stop-prod": "pm2 stop all"
+		"start-prod": "pm2 startOrRestart ecosystem.config.js",
+		"restart-prod": "pm2 restart app-store-api",
+    "stop-prod": "pm2 stop app-store-api"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.0",
