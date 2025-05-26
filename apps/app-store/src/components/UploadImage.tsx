@@ -55,7 +55,7 @@ export const UploadImage = ({appId, images, role, updateApp, isOwner}:
                 title={`Screenshot ${idx + 1}`}
                 actionIcon={
                   <IconButton
-                    sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                    sx={{ backgroundColor: 'rgba(239, 99, 99, 0.54)' }}
                     aria-label={`Delete this image`}
                     onClick={handleDeleteImage(image.id)}
                     >
