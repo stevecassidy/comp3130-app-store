@@ -123,14 +123,18 @@ export const AppView = () => {
           label="Data about user's location while using the app."
           />
 
-    <ReviewForm app={app} isOwner={isOwner} />
+    <ReviewForm app={app} isOwner={isOwner} updateApp={updateApp} />
 
     </div>
   );
 }
 
 
-interface DSProps {app: AndroidApp, property: keyof AndroidAppDataSafety, label: string};
+interface DSProps {
+  app: AndroidApp,
+  property: keyof AndroidAppDataSafety, 
+  label: string
+};
 
 const DataSafety = ({app, property, label}: DSProps) => {
 
@@ -144,9 +148,9 @@ const DataSafety = ({app, property, label}: DSProps) => {
     else return <></>;
 }
 
-interface ReviewProps {app: AndroidApp, isOwner: boolean};
+interface ReviewProps {app: AndroidApp, isOwner: boolean, updateApp: (appId: string | undefined) => Promise<void>};
 
-export const ReviewForm = ({app, isOwner} : ReviewProps) => {
+export const ReviewForm = ({app, isOwner, updateApp} : ReviewProps) => {
 
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>('');
@@ -166,6 +170,7 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
       },
       body: JSON.stringify(reviewData),
     });
+    updateApp(app.id);
   };
 
   // Check if the user has already reviewed the app
