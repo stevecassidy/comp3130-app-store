@@ -168,6 +168,8 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
     });
   };
 
+  // Check if the user has already reviewed the app
+  const ourReview = app.reviews?.find(review => review.userId === user?.user.id);
 
   if (isOwner ||  !user)
     return (
@@ -185,9 +187,22 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
 
       </div>
     )
-  else 
-  return (
+  else if (ourReview)
+    return (
+     <>
+     <h2>Your Review</h2>
 
+      
+        <Paper elevation={2} sx={{ padding: 2, marginBottom: 2, backgroundColor: '#f3ecb9' }}>
+          <Rating name="rating" value={ourReview.rating} readOnly />
+          
+          <p dangerouslySetInnerHTML={{__html: md.render(ourReview.comment)}} />
+
+        </Paper>
+    </>
+  )
+  else
+  return (
     <Box            
       component="form"
       noValidate
@@ -220,8 +235,6 @@ export const ReviewForm = ({app, isOwner} : ReviewProps) => {
         <Button onClick={handleSubmit} variant="outlined">Submit Your Review</Button>
       </div>
     </Box>
-
-
   )
 
 }

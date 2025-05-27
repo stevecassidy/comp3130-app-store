@@ -9,7 +9,7 @@ export interface UserSummaryDetails {
 
 export interface AndroidAppReview extends APIBase {
   appID: string;
-  userID: string;
+  userId: string;
   rating: number;
   comment: string;
 }
