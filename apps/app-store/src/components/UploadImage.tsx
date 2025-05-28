@@ -42,10 +42,10 @@ export const UploadImage = ({appId, images, role, updateApp, isOwner}:
 
   return (
     <div>
-      <h1>Upload {niceRoleName} Image</h1>
+      <h1>{isOwner && 'Upload'} {niceRoleName} Images</h1>
 
       {images && 
-        <ImageList sx={{ width: '100%', height: 450 }} cols={5} rowHeight={164}>
+        <ImageList sx={{ width: '100%'}} cols={5}>
           {images.map((image: AndroidAppImage, idx: number) => (
             <ImageListItem key={`screenshot-${idx}`}>
               <img src={`${API_BASE_URL}${image.url}`} width="200"/>
