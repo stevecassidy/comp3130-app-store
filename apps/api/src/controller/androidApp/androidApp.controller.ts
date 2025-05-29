@@ -15,28 +15,6 @@ import mongoose from "mongoose";
 
 //#endregion
 
-/**
- * @name ValidateAndroidApp 
- * @memberof Helpers
- * @description All validation required before creating or update androidApp
- * @param value (String) - app name to be validated
- * @return Boolean - True as Valid to Create or Update, False as Not Valid
- */
-const ValidateAndroidAppName = async (value: string, id?: string): Promise<boolean | undefined> => {
-
-    // Fetch androidApp based on requested name
-    const androidApp = await AndroidAppModel.findOne<IAndroidApp>({
-        name: { $regex: value, $options: 'i' },
-         _id: { $ne: id } 
-    })
-
-    if (androidApp)
-        if (value === androidApp.name)
-            return false
-
-    return true
-}
-
 
 const validateID = async (slug: string): Promise<boolean> => {
     const found = await AndroidAppModel.findOne({slug: slug});
@@ -179,18 +157,6 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
     const body = req.body as CreateAndroidAppRequest
 
     try {
-        // Validation
-        const validName = await ValidateAndroidAppName(body.name)
-
-        if (!validName)
-            return res.status(200).json(
-                SingleApiResponse({
-                    success: true,
-                    data: null,
-                    statusCode: 409,
-                    message: 'AndroidApp Name already exist.'
-                })
-            );
 
         const appSlug = await generateAppSlug(validateID);
     
@@ -221,6 +187,7 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
         console.error(error);
         return res.status(500).json(
             SingleApiResponse({
+                message: error as string,
                 success: false,
                 data: null,
                 statusCode: 500

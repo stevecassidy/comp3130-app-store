@@ -54,8 +54,12 @@ export const createAndroidApp = async (
       },
       body: JSON.stringify(androidApp),
     });
-    const data = await response.json();
-    return objectToAndroidApp(data.data);
+    if (response.status === 201) {
+      const data = await response.json();
+      return objectToAndroidApp(data.data);
+    } else {
+      throw new Error(response.statusText);
+    }
   } else {
     throw new Error('User not logged in');
   }
@@ -75,8 +79,12 @@ export const updateAndroidApp = async (
       },
       body: JSON.stringify(androidApp),
     });
-    const data = await response.json();
-    return objectToAndroidApp(data.data);
+    if (repsponse.status === 200) {
+      const data = await response.json();
+      return objectToAndroidApp(data.data);
+    } else {
+      throw new Error(response.statusText);
+    }
   } else {
     throw new Error('User not logged in');
   }
