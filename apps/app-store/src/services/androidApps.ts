@@ -79,7 +79,7 @@ export const updateAndroidApp = async (
       },
       body: JSON.stringify(androidApp),
     });
-    if (repsponse.status === 200) {
+    if (response.status === 200) {
       const data = await response.json();
       return objectToAndroidApp(data.data);
     } else {
