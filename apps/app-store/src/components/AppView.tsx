@@ -93,7 +93,7 @@ export const AppView = () => {
 
       <h2>Reviewer Information</h2>
 
-      {app.instructions}
+      <p dangerouslySetInnerHTML={{__html: md.render(app.instructions)}} />
 
       <h2>App Capabilities and Data Collection</h2>
 
