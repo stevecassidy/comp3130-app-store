@@ -7,7 +7,7 @@ import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync, unlinkSync} from "fs";
 import {join} from "path";
 import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
-import {AddReviewForAndroidAppRequest, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AddReviewForAndroidAppRequest, AndroidAppReview, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
 import {generateAppSlug} from "../../helpers/appslug.helper";
 import {AppReviewModel} from "../../models/androidApp/review.model";
@@ -41,7 +41,7 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
                 .sort({"owner": 'desc'})
                 .populate('owner')
                 .populate('images');
-
+    
             return res.status(200).json(
                 ApiResponse({
                     success: true,
@@ -120,7 +120,8 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
 
     // Extracting request
     const id = req.params.id as string;
-    
+    const { role: userRole } = req as CustomRequest
+
     try {
         const app = await AndroidAppModel
             .findById<IAndroidApp>(id)
@@ -132,6 +133,14 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
             // rewrite apkFile to a URL
             if (app.apkFile) app.apkFile = `/assets/apk/${app.apkFile}`
 
+            // if we're admin, get the reviews by the owner
+            // of this app
+            if (userRole === 'admin') {
+                const ownerID = new mongoose.Types.ObjectId(app.owner);
+                app.hasReviewed = await AppReviewModel.find({userId: ownerID});
+            }
+            
+            console.log('app', app);
             return res.status(200).json(
                 SingleApiResponse({
                     success: true,

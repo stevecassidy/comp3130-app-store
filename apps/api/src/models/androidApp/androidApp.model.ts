@@ -43,6 +43,10 @@ const androidAppSchema = new Schema<IAndroidApp>({
     apkFile: {
         type: String,
         required: false,
+    },
+    hasReviewed: {
+        type: Array,
+        required: false,
     }
   }, {
     timestamps: true,
@@ -68,6 +72,9 @@ androidAppSchema.virtual('reviews', {
     localField: '_id',
     foreignField: 'appId',
 });
+
+
+
 
 const AndroidAppModel = model<IAndroidApp>("AndroidApp", androidAppSchema)
 

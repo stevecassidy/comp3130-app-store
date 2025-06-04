@@ -26,6 +26,7 @@ export interface AndroidApp extends APIBase {
   dataSafety: AndroidAppDataSafety;
   repoLink?: string;
   reviews?: AndroidAppReview[];
+  hasReviewed?: AndroidAppReview[];
 }
 
 export interface DataSafetyEntry {

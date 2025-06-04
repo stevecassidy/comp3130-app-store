@@ -15,6 +15,7 @@ export interface IAndroidApp extends IBase {
     dataSafety?: AndroidAppDataSafety;
     apkFile?: string;
     repoLink?: string;
+    hasReviewed?: IAppReview[];
 }
 
 // Request

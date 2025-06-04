@@ -23,6 +23,13 @@ const userSchema = new Schema<IUser>({
 	}
 });
 
+// reviews by this user
+userSchema.virtual('reviews', {
+    ref: 'AndroidAppReview',
+    localField: '_id',
+    foreignField: 'userId',
+});
+
 const UserModel = model<IUser>("User", userSchema);
 //#endregion
 

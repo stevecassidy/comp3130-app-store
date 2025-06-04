@@ -179,6 +179,22 @@ export const ReviewForm = ({app, isOwner, updateApp} : ReviewProps) => {
   if (isOwner ||  !user)
     return (
       <div>
+
+  {/* should only be present for the admin user */}
+  {app.hasReviewed?.length &&
+     (
+      <div>
+        <h2>Reviews by {app.owner?.name}</h2>
+        {app.hasReviewed.map((review: AndroidAppReview, index: number) => (
+          <Paper elevation={2} key={index} sx={{ padding: 2, marginBottom: 2, backgroundColor: '#f5ead1' }}>
+            <Rating name="rating" value={review.rating} readOnly />
+
+            <p dangerouslySetInnerHTML={{__html: md.render(review.comment)}} />
+          </Paper>
+        ))
+      }
+      </div>
+    )}
         <h2>Reviews of {app.name}</h2>
 
       {app.reviews && app.reviews.map((review: AndroidAppReview, index: number) => (
@@ -190,14 +206,13 @@ export const ReviewForm = ({app, isOwner, updateApp} : ReviewProps) => {
           </Paper>
         ))}
 
-      </div>
+  
+    </div>
     )
   else if (ourReview)
     return (
      <>
      <h2>Your Review</h2>
-
-      
         <Paper elevation={2} sx={{ padding: 2, marginBottom: 2, backgroundColor: '#f3ecb9' }}>
           <Rating name="rating" value={ourReview.rating} readOnly />
           
