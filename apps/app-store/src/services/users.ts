@@ -3,6 +3,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 export interface UserToken {
@@ -39,7 +40,6 @@ export const getCurrentUser = () => {
   const userToken = localStorage.getItem(USER_KEY);
   if (userToken) {
     const user = JSON.parse(userToken) as UserToken;
-    console.log('user', user);
     if (user) {
       const parsedToken = jwtDecode(user.token);
       const expire = new Date(parsedToken.exp);

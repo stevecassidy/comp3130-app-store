@@ -123,7 +123,7 @@ export const AppView = () => {
           label="Data about user's location while using the app."
           />
 
-    <ReviewForm app={app} isOwner={isOwner} updateApp={updateApp} />
+    <ReviewForm app={app} isOwner={isOwner || user?.role === 'admin'} updateApp={updateApp} />
 
     </div>
   );

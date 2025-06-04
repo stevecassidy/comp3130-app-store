@@ -10,6 +10,7 @@ import {UserContextProvider} from './contexts/UserContextProvider';
 import {CreateApp} from './components/CreateApp';
 import {AppView} from './components/AppView';
 import {HelpPage} from './pages/Help';
+import {AdminView} from './pages/AdminView';
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Box sx={{ my: 4 }}>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/admin" element={<AdminView />} />
                 <Route path="/create" element={<CreateApp />} />
                 <Route path="/edit/:appId" element={<CreateApp />} />
                 <Route path="/app/:appId" element={<AppView />} />

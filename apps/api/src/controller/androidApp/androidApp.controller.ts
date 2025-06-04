@@ -38,6 +38,7 @@ export const GetAndroidApps = async (req: Request, res: Response): Promise<Respo
             // get all apps
             const androidApps = await AndroidAppModel
                 .find()
+                .sort({"owner": 'desc'})
                 .populate('owner')
                 .populate('images');
 

@@ -24,6 +24,7 @@ export const NavBar = () => {
           COMP3130 App Store
         </Typography>
         <IconButton color="inherit" onClick={() => navigate("/")}><HomeIcon/></IconButton>
+        {user?.user.role === 'admin' && <Button onClick={() => navigate("/admin")} color="inherit">Admin</Button>}
         <IconButton color="inherit" onClick={() => navigate("/help")}><HelpIcon /></IconButton>
 
         {user ? (
