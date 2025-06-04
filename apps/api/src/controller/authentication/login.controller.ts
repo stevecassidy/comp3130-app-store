@@ -63,7 +63,7 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 
 		// Token Generation
 		const token = jwt.sign(
-			{ id: user._id.toString() }, 
+			{ id: user._id.toString(), role: user.role || 'user' }, 
 			secretKey, 
 			{ expiresIn: "7d" }
 		);
@@ -87,7 +87,12 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 			SingleApiResponse({
 				success: true,
 				data: { 
-					user: {email: user.email, name: user.name, id: user._id}, 
+					user: {
+						email: user.email, 
+						name: user.name, 
+						role: user.role || 'user',
+						id: user._id
+					}, 
 					token: userAccessToken.accessToken 
 				},
 				statusCode: 200

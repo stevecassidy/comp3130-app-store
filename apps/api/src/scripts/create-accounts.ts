@@ -52,6 +52,7 @@ Connect().then(async () => {
           email: record.email,
           password: record.password,
           name: record.name || record.email.split('@')[0], // Use part of email as name if not provided
+          role: record.role || 'user',
           salt: '',
           updatedBy: 'create-accounts-script',
           createdBy: 'create-accounts-script'

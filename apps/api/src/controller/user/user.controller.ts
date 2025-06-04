@@ -72,7 +72,12 @@ const CreateUser = async (req: Request, res: Response): Promise<Response> => {
 			createdBy: '1'
 		})
 
-		const token = jwt.sign({ id: user._id.toString() }, `${secretKey}`, {
+		const token = jwt.sign({ 
+			id: user._id.toString(), 
+			role: user.role || 'user' 
+		}, 
+		`${secretKey}`, 
+		{
 			expiresIn: "7d"
 		});
 

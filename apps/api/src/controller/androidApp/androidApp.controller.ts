@@ -31,9 +31,27 @@ const validateID = async (slug: string): Promise<boolean> => {
  */
 export const GetAndroidApps = async (req: Request, res: Response): Promise<Response> => {
 
-    const { id: currentUserId } = req as CustomRequest
-
+    const { id: currentUserId, role: userRole } = req as CustomRequest
+    
     try {
+        if (userRole === 'admin') {
+            // get all apps
+            const androidApps = await AndroidAppModel
+                .find()
+                .populate('owner')
+                .populate('images');
+
+            return res.status(200).json(
+                ApiResponse({
+                    success: true,
+                    data: androidApps,
+                    count: androidApps.length,
+                    statusCode: 200
+                })
+            );
+        }
+        // otherwise we return just a few
+
         const androidAppsLimit = 10;
         let myApp: Omit<Omit<IAndroidApp, never>, never> | null = null;
 
@@ -483,7 +501,6 @@ export const DeleteImageForAndroidApp = async (req: Request, res: Response): Pro
     }
     // delete the image
     try {
-        console.log('deleting image', image.filename);
         unlinkSync(join(IMAGE_DIR, image.filename));
         await image.deleteOne();
     } catch (error) {

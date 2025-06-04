@@ -6,6 +6,7 @@ import { IBase } from "../base.interface";
 // Model
 interface IUserBase extends IBase {
 	email: string;
+	role?: string;
 	password: string;
 	salt: string;
 	name: string;

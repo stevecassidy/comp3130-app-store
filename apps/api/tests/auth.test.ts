@@ -39,6 +39,8 @@ describe('Auth Endpoints', () => {
     expect(response.body.data).toHaveProperty('token');
     expect(response.body.data).toHaveProperty('user');
     expect(response.body.data.user).toHaveProperty('email', newUser.email);
+    expect(response.body.data.user).toHaveProperty('role', 'user');
+
   });
 
 
@@ -63,6 +65,8 @@ describe('Auth Endpoints', () => {
     expect(response.body.data).toHaveProperty('token');
     expect(response.body.data).toHaveProperty('user');
     expect(response.body.data.user).toHaveProperty('email', testUser.email);
+    expect(response.body.data.user).toHaveProperty('role', 'user');
+
   });
 
 

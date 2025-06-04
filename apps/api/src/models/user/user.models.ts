@@ -7,12 +7,14 @@ import { IUser } from "../../interface/user/user.interface";
 const userSchema = new Schema<IUser>({
 	email: { type: String, required: true },
 	password: { type: String, required: true },
+	role: { type: String, required: false },
 	salt: { type: String },
 	name: { type: String, required: true },
 },{
 	toJSON: {
 		transform: function(doc, ret) {
           ret.id = ret._id;
+					ret.role = ret.role || 'user';
           delete ret._id;
           delete ret.__v;
 					delete ret.password;

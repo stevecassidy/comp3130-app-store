@@ -31,6 +31,7 @@ export const AuthMiddleware = async (
 		// Make request as CustomRequest
 		// Add decoded token to string property in CustomRequest
 		(req as CustomRequest).id = decoded.id;
+		(req as CustomRequest).role = decoded.role;
 
 		// Run next function
 		next();
