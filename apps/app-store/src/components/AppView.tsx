@@ -176,6 +176,7 @@ export const ReviewForm = ({app, isOwner, updateApp} : ReviewProps) => {
   // Check if the user has already reviewed the app
   const ourReview = app.reviews?.find(review => review.userId === user?.user.id);
 
+  console.log('app', app);
   if (isOwner ||  !user)
     return (
       <div>
@@ -186,11 +187,13 @@ export const ReviewForm = ({app, isOwner, updateApp} : ReviewProps) => {
       <div>
         <h2>Reviews by {app.owner?.name}</h2>
         {app.hasReviewed.map((review: AndroidAppReview, index: number) => (
+          <><h3>Review of <Link to={`/app/${review.appId}`}>app</Link></h3>
           <Paper elevation={2} key={index} sx={{ padding: 2, marginBottom: 2, backgroundColor: '#f5ead1' }}>
             <Rating name="rating" value={review.rating} readOnly />
 
             <p dangerouslySetInnerHTML={{__html: md.render(review.comment)}} />
           </Paper>
+          </>
         ))
       }
       </div>

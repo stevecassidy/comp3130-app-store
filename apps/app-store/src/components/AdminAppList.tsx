@@ -1,6 +1,6 @@
 import {AndroidApp} from "@app-store/shared-types";
-import {Box} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {Box, TextField} from "@mui/material";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
 import {getAndroidApps} from "../services/androidApps";
 import {getCurrentUser} from "../services/users";
@@ -16,10 +16,28 @@ import TableRow from '@mui/material/TableRow';
 
 export const AdminAppList = () => {
   const [apps, setApps] = useState<AndroidApp[]>([]);
+  const [displayApps, setDisplayApps] = useState<AndroidApp[]>([]);
+  
+  const [searchTerm, setSearchTerm] = useState('');
 
   const user = useMemo(() => getCurrentUser()?.user, []);
 
-  console.log('apps', apps);
+  const sortApps = useCallback((apps: AndroidApp[]) => {
+    const filteredApps = apps.filter(
+        app => app.owner?.name && app.owner.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const sortedApps = filteredApps.sort((a, b) => {
+      if ((a.owner?.email || 0) < (b.owner?.email || 0)) {
+        return -1;
+      }
+      if ((a.owner?.email || 0) > (b.owner?.email || 0)) {
+        return 1;
+      }
+      return 0;
+    });
+    setDisplayApps(sortedApps);
+  }, [searchTerm]);
+
   useEffect(() => {
     const fetchApps = async () => {
       const apps = await getAndroidApps();
@@ -28,6 +46,9 @@ export const AdminAppList = () => {
     fetchApps();
   }, [user]);
 
+  useEffect(() => {
+    sortApps(apps);
+  }, [apps, sortApps])
 
   return (
     <div>
@@ -38,6 +59,13 @@ export const AdminAppList = () => {
           gap: 2,
         }}
       >
+      <p>{apps.length} Student submissions.</p>
+
+      <TextField 
+        value={searchTerm} 
+        placeholder="Filter by Student Name"
+        fullWidth
+        onChange={(e) => setSearchTerm(e.target.value)} />
 
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="List of Student Apps">
@@ -51,9 +79,9 @@ export const AdminAppList = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {apps.map((app) => (
+          {displayApps.map((app) => (
             <TableRow
-              key={app.name}
+              key={app.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">{app.owner?.name}</TableCell> 

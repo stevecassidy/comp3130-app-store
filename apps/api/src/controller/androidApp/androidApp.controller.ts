@@ -140,7 +140,6 @@ export const GetAndroidApp = async (req: Request, res: Response): Promise<Respon
                 app.hasReviewed = await AppReviewModel.find({userId: ownerID});
             }
             
-            console.log('app', app);
             return res.status(200).json(
                 SingleApiResponse({
                     success: true,

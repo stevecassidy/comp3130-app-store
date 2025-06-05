@@ -8,7 +8,7 @@ export interface UserSummaryDetails {
 }
 
 export interface AndroidAppReview extends APIBase {
-  appID: string;
+  appId: string;
   userId: string;
   rating: number;
   comment: string;
@@ -71,24 +71,24 @@ export interface UpdateAndroidAppRequest extends APIBase {
 }
 
 export interface AddReviewForAndroidAppRequest extends APIBase {
-  appID: string;
+  appId: string;
   rating: number;
   comment: string;
 }
 
 export interface UploadAPKResponse {
-  appID: string;
+  appId: string;
   url: string;
 }
 
 export interface UploadImageResponse {
-  appID: string;
+  appId: string;
   url: string;
   role: string;
 }
 
 export interface DeleteImageResponse {
-  appID: string;
+  appId: string;
 }
 
 /**
