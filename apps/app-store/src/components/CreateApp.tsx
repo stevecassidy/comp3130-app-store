@@ -1,5 +1,5 @@
 import {AndroidApp, AndroidAppDataSafety, UpdateAndroidAppRequest} from "@app-store/shared-types";
-import {Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
+import {Alert, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, TextField} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {UserTokenContext} from "../contexts/userContext";
@@ -41,6 +41,7 @@ export const CreateApp = () => {
   const {currentUser} = useContext(UserTokenContext);
   const [user, setUser] = useState<UserToken | null>(null);
   const [app, setApp] = useState<AndroidApp>(appTemplate);
+  const [message, setMessage] = useState<string>('');
 
   // a flag to differentiate between creating a new app and updating an existing one
   const updating = appId !== undefined;
@@ -92,8 +93,15 @@ export const CreateApp = () => {
         navigate({pathname: `/app/${appId}`});
       } else {
         const newApp = {...app, owner: user?.user.email};
-        createAndroidApp(newApp).then((response) => {
+        console.log('creating app:', newApp);
+        createAndroidApp(newApp)
+        .then((response) => {
           navigate({pathname: `/app/${response.id}`});
+        })
+        .catch((error) => {
+          setMessage(error.message);
+          // scroll to top to show error message
+          scrollTo(0,0);
         });
       }
     }
@@ -101,7 +109,8 @@ export const CreateApp = () => {
 
   return (
     <div>
-      <h1>Create App</h1>          
+      <h1>Create App</h1>
+      {message && <Alert id='errorAlert' severity='error'>{message}</Alert>}
       <Box
             component="form"
             noValidate

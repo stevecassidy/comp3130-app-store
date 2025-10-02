@@ -7,7 +7,7 @@ import { IAndroidApp } from "../../interface/androidApp/androidApp.interface";
 import {mkdirSync, renameSync, unlinkSync} from "fs";
 import {join} from "path";
 import {APK_DIR, IMAGE_DIR} from "../../config/express.config";
-import {AddReviewForAndroidAppRequest, AndroidAppReview, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
+import {AddReviewForAndroidAppRequest, CreateAndroidAppRequest, UpdateAndroidAppRequest} from "@app-store/shared-types";
 import {AndroidAppImageModel} from "../../models/androidApp/appImage.model";
 import {generateAppSlug} from "../../helpers/appslug.helper";
 import {AppReviewModel} from "../../models/androidApp/review.model";
@@ -209,17 +209,27 @@ export const CreateAndroidApp = async (req: Request, res: Response): Promise<Res
                 statusCode: 201
             })
         );
-
     } catch (error: unknown) {
-        console.error(error);
-        return res.status(500).json(
-            SingleApiResponse({
-                message: error as string,
-                success: false,
-                data: null,
-                statusCode: 500
-            })
-        );
+        // report a validation error as a 400 response
+        if (error instanceof mongoose.Error.ValidationError) {
+            return res.status(400).json(
+                SingleApiResponse({
+                    message: error.message,
+                    success: false,
+                    data: null,
+                    statusCode: 400
+                }));
+        } else {
+            console.error(error);
+            return res.status(500).json(
+                SingleApiResponse({
+                    message: error as string,
+                    success: false,
+                    data: null,
+                    statusCode: 500
+                })
+            );
+        }
     }
 }
 

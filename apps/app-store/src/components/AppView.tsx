@@ -14,6 +14,7 @@ import {MarkdownEditor} from "./MarkdownEditor";
 import {UploadAPK} from "./UploadAPK";
 import {UploadImage} from "./UploadImage";
 import BadgeIcon from '@mui/icons-material/Badge';
+import {Superscript} from "@mui/icons-material";
 
 export const AppView = () => {
   const appId = useParams().appId;
@@ -42,8 +43,9 @@ export const AppView = () => {
 
   return (
     <div>
-      <h1>{app.name} 
-        {isOwner && <Link to={`/edit/${appId}`}><EditIcon /></Link>}</h1>
+      <h1>{app.name}</h1>
+
+      {isOwner && <Link to={`/edit/${appId}`}><EditIcon /> Edit App Details</Link>}
 
       {iconURL && <img src={`${API_BASE_URL}${iconURL}`} width="100" height="100" alt="App Icon"/>}
 
@@ -176,7 +178,6 @@ export const ReviewForm = ({app, isOwner, updateApp} : ReviewProps) => {
   // Check if the user has already reviewed the app
   const ourReview = app.reviews?.find(review => review.userId === user?.user.id);
 
-  console.log('app', app);
   if (isOwner ||  !user)
     return (
       <div>

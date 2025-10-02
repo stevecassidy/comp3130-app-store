@@ -1,22 +1,12 @@
-
 # COMP3130 App Store
-
-[![Express JS](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)]()
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)]()
-[![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)]()
-[![React Query](https://img.shields.io/badge/React_Query-FF4154?style=for-the-badge&logo=React_Query&logoColor=white)]()
-[![TS Node](https://img.shields.io/badge/ts--node-3178C6?style=for-the-badge&logo=ts-node&logoColor=white)]()
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)]()
-[![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)]()
-[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)]()
 
 A mobile 'App Store' for use in COMP3130 Mobile App Development.  Students develop their apps and use the
 App Store to 'publish' them and take part in reviews of other apps.
 
 ## Installation
 
-Create a `.env` file in the project directory (apps/api and apps/dashoard) with 
-our environment variables. You can copy the contents of the `.env.example` file 
+Create a `.env` file in the project directory (apps/api and apps/app-store) with
+our environment variables. You can copy the contents of the `.env.dist` files
 and replace the values  with your own.
 
 Install dependencies by running the command in the terminal (root folder)
@@ -25,6 +15,25 @@ Install dependencies by running the command in the terminal (root folder)
 npm install
 ```
 
+### Local Database
+
+You can either configure a remote MongoDB database with [MongoDB Atlas](https://cloud.mongodb.com/) or use a local database for development.   You can run a local
+database using the docker-compose.yml file in `apps/api` by running:
+
+```base
+docker compose up -d
+```
+
+from inside that folder.  This should start a local MongoDB instance so you can
+use the following database connection string in api/.env:
+
+```bash
+MONGO_DB=mongodb://root:example@localhost:27017/appstore?authSource=admin
+```
+
+(User is `root` password is `example`).  A web interface (mongodb-express)
+to the database is also run on port 8080.
+
 Run the following command in the root directory to start the application
 
 ```bash
@@ -32,6 +41,22 @@ npm run dev
 ```
 
 Access the application in your dashboard at `http://127.0.0.1:5173/` and API `http://localhost:3001`
+
+## Creating User Accounts
+
+The API app has a script for creating user accounts from a CSV file. Create
+a CSV file with the format:
+
+```csv
+email,password,name,role
+user1@example.com,password123,User One,user
+user2@example.com,securepass,User Two,user
+admin@example.com,adminpass,Admin User,admin
+```
+
+The role column should be one of `user` or `admin`.  The admin user
+gets access to the admin pages in the app.
+
 
 ## Build
 

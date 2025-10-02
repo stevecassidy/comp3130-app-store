@@ -7,12 +7,28 @@
 - [x] Add Data Safety section to the app creation form
 - [x] Option to update/edit an app
 - [x] Add 'review instructions' to app, again Markdown containing how-to for review
-- [ ] Add a field to link to the Github repository for the app
+- [x] Downloaded APK file should have a better name, currently just a hash
+- [x] Add a field to link to the Github repository for the app
 - [ ] User can be assigned other apps to review
-- [ ] User can add a review for an app including a rating and feedback (markdown)
-- [ ] Owner of app can see review feedback and ratings for their app
-- [ ] User roles: staff/student, staff can see more detail, eg. user identity, github links
-- [ ] App Icon should be part of the main create app for rather than an add-on
+- [x] User can add a review for an app including a rating and feedback (markdown)
+- [x] Owner of app can see review feedback and ratings for their app
+- [x] User roles: staff/student, staff can see more detail, eg. user identity, github links
+- [x] Work out how students will login/register
+- [x] Can delete and maybe re-order screenshot images
+- [x] User can see reviews that they have left
+- [ ] Show average rating for apps based on reviews
+
+## Signing Up
+
+Bulk creation of accounts from spreadsheet with:
+
+```bash
+npm run create-accounts xxxxx.csv
+```
+
+in the apps/api folder.  xxxxx.csv contains email, password and name columns.
+
+------------
 
 ## Assignment Milestones
 

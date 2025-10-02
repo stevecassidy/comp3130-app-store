@@ -54,9 +54,14 @@ export const createAndroidApp = async (
       },
       body: JSON.stringify(androidApp),
     });
+    console.log('create response', response);
     if (response.status === 201) {
       const data = await response.json();
       return objectToAndroidApp(data.data);
+    } else if (response.status === 400) {
+      const data = await response.json();
+      console.log('create error response', data);
+      throw new Error(data.statusText);
     } else {
       throw new Error(response.statusText);
     }

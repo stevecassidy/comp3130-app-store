@@ -32,7 +32,6 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 
 		// Fetch user based on email and password
 		const user = await UserModel.findOne<IUser>({ email: email });
-
 		if (!user)
 			return res.status(200).json(
 				SingleApiResponse({
@@ -46,7 +45,7 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 		const pwHash = hashPassword(password, user.salt);
 
 		// Flagger for password
-		if (user.password !== pwHash)
+		if (user.password !== pwHash) {
 			return res.status(200).json(
 				SingleApiResponse({
 					success: true,
@@ -54,6 +53,7 @@ const Login = async (req: Request, res: Response): Promise<Response> => {
 					statusCode: 404
 				})
 			);
+		}
 
 
 		// Check if user access token is already existing
